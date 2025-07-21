@@ -1,0 +1,42 @@
+[
+    [
+        {
+            "hostname": "A"
+        },
+        {
+            "hostname": "B"
+        }
+    ],
+    [
+        {
+            "hostname": "B"
+        },
+        {
+            "hostname": "C"
+        }
+    ],
+    [
+        {
+            "hostname": "C"
+        },
+        {
+            "hostname": "D"
+        }
+    ],
+    [
+        {
+            "hostname": "D"
+        },
+        {
+            "hostname": "E"
+        }
+    ],
+    [
+        {
+            "hostname": "E"
+        },
+        {
+            "hostname": "A"
+        }
+    ]
+]
