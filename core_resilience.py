@@ -95,7 +95,7 @@ def compute_Core_Influence_Strength_metric(core_strength, core_influence, graph_
 def write_core_resilience_to_csv(Graph, core_number, core_strength, core_influence, CIS):
     # Extract all unique nodes from the keys of one of the dictionaries
     nodes = list(core_number.keys())
-    output_file='core_resilience.csv'
+    core_output_file='core_resilience.csv'
     # Define header
     header = ['Node', 'Core Number', 'Core Strength', 'Core Influence']
 
@@ -111,21 +111,23 @@ def write_core_resilience_to_csv(Graph, core_number, core_strength, core_influen
         rows.append(row)
 
     # Write to CSV (use semicolon for Excel compatibility)
-    with open(output_file, 'a', newline='', encoding='utf-8') as csvfile:
+    with open(f"Analyses/{core_output_file}", 'a', newline='', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=header, delimiter=';')
         writer.writeheader()
         writer.writerows(rows)
 
-    file_exists = os.path.isfile('CIS_metric.csv')
+
+    CIS_output_filename = 'CIS_metric.csv'
+    file_exists = os.path.isfile(f'Analyses/{CIS_output_filename}')
     print(f"Core_Influence Strength Metric: {CIS}")
     header = ['Name', 'Core-Influence Strength Metric']
-    with open('CIS_metric.csv', "a" ,newline='', encoding='utf-8') as file:
+    with open(f'Analyses/{CIS_output_filename}', "a" ,newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, delimiter=';', fieldnames=header)
         if not file_exists:
             writer.writeheader()
         writer.writerow({'Name': Graph.name, 'Core-Influence Strength Metric': CIS})
 
-    print(f"Core resilience data written to {output_file}")
+    print(f"Core resilience data written to {CIS_output_filename}")
 
 def compute_core_resilience(G):
     '''A node's core number is the highest k for which it remains in the k-core, reflecting its structural depth and resilience.'''
