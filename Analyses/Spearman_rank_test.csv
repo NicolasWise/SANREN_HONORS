@@ -1,0 +1,15 @@
+Spearman correlation between betweeness_centrality and closeness_centrality: 0.714, p = 0.00609
+Spearman correlation between betweeness_centrality and degree_centrality: 0.864, p = 3.24e-05
+Spearman correlation between betweeness_centrality and core_influences: 0.761, p = 0.000991
+Spearman correlation between betweeness_centrality and core_numbers: 0.136, p = 0.689
+Spearman correlation between betweeness_centrality and core_strengths: -0.571, p = 0.139
+Spearman correlation between closeness_centrality and degree_centrality: 0.763, p = 0.000144
+Spearman correlation between closeness_centrality and core_influences: 0.455, p = 0.102
+Spearman correlation between closeness_centrality and core_numbers: 0.317, p = 0.2
+Spearman correlation between closeness_centrality and core_strengths: -0.600, p = 0.0876
+Spearman correlation between degree_centrality and core_influences: 0.895, p = 4.43e-08
+Spearman correlation between degree_centrality and core_numbers: 0.229, p = 0.413
+Spearman correlation between degree_centrality and core_strengths: -0.105, p = 0.687
+Spearman correlation between core_influences and core_numbers: 0.393, p = 0.164
+Spearman correlation between core_influences and core_strengths: -0.156, p = 0.594
+Spearman correlation between core_numbers and core_strengths: -0.429, p = 0.289
