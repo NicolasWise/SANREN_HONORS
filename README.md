@@ -24,8 +24,8 @@
                     - use graph generation methods - random graph, graph geometric, gariel graphs, waxman graphs. 
                 Sample of the SANReN graph:
                     - select random edges from the isis-links.json edges dictionary to plot smaller sample sized graphs.
-                    - length = len(edges)
-                    - edges = [length, 10%(length), 25%(length), 50%(length),..., 95%(length)]
+                    - length = Graph.size() #gives you the number of edges
+                    - edges = [length, 10%(length), 25%(length), 50%(length), ..., 95%(length)]
                 - write these to a json
                 - create visualisations
                 - write spectral, core resilience, classical measures, top r measures for each generated graph.

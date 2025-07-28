@@ -13,7 +13,6 @@ def compute_spectral_analysis(G):
 
     # Second highest eiganvalue
     algebraic_connectivity = eigenvalues[1]
-    print(f"Algebraic Connectivity: {algebraic_connectivity}")
 
     # Count how many eigenvalues fall in the range [0.9, 1.1]
     eigenvalue_one_multiplicity = np.sum((eigenvalues >= 0.9) & (eigenvalues <= 1.1))
@@ -26,16 +25,12 @@ def compute_spectral_analysis(G):
     # Density is just proportion of eigenvalues in the range
     eigenvalue_one_cluster_density = eigenvalue_one_multiplicity / total_eigenvalues
 
-    print(f"Multiplicity of λ = 1: {eigenvalue_one_multiplicity}")
-    print(f"Density (proportion) of clustered eigenvalues around 1: {eigenvalue_one_cluster_density:.2f}")
-    print(f"Multiplicity of λ = 0: {eigenvalue_zero_multiplicity}")
-
     return eigenvalue_one_cluster_density, algebraic_connectivity, eigenvalue_one_multiplicity, eigenvalue_zero_multiplicity
 
-def write_spectral_to_output_file(G, algebraic_connectivity, eigenvalue_one_cluster_density, eigenvalue_one_multiplicity, eigenvalue_zero_multiplicity):
+def write_spectral_to_output_file(G, algebraic_connectivity, eigenvalue_one_cluster_density, eigenvalue_one_multiplicity, eigenvalue_zero_multiplicity, sample_name=''):
     output_file = 'spectral_results.csv'
     # Prepare data for CSV
-    data = [{'Name': G.name, 'Algebraic Connectivity': algebraic_connectivity, 'Multiplicity of the one eigenvalue':eigenvalue_one_multiplicity,
+    data = [{'Name': f'{G.name}_{sample_name}', 'Algebraic Connectivity': algebraic_connectivity, 'Multiplicity of the one eigenvalue':eigenvalue_one_multiplicity,
            'Density of eigenvalues around 1':eigenvalue_one_cluster_density, 'Multiplicity of the zero eigenvalue':eigenvalue_zero_multiplicity}]
 
     header = ['Name', 'Algebraic Connectivity', 'Multiplicity of the one eigenvalue',

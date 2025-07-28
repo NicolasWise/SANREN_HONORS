@@ -1,5 +1,4 @@
 import csv
-from statistics import correlation
 from scipy.stats import spearmanr
 
 def read_nodes_from_csv(filename):

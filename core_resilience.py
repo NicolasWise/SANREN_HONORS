@@ -3,7 +3,9 @@ import itertools
 import csv
 import os
 
-def compute_core_strength(G):
+''' Exhaustive search: This method gives a more accurate approximation for core strengths.
+    But, its complexity is O(n2^d) because it generates all combinations of neighbors for each node and is therefore ineffecient for large graphs'''
+def compute_core_strength_v0(G):
     '''Initialise core stregnth dictionary
        and compute original core numbers of nodes  '''
     core_strength ={}
@@ -49,6 +51,32 @@ def compute_core_strength(G):
 
     return core_strength
 
+''' Greedy Approach: This core strength method removes the weaker neighbors first to reduce 
+    complexity. Its complexity is O(n.d). The core strengths are less accurate, but decent approximations 
+    of a node's core strenght but much faster for large graphs'''
+def compute_core_strength(G):
+    core_strength = {}
+    original_core = nx.core_number(G)
+
+    for node in G:
+        '''Sort the neighbors of each node in increasing order (smallest core number to largest core number).
+            This allows us to remove the weaker neighbors first to save time. '''
+        neighbors = sorted(G.neighbors(node), key=lambda x: G.degree(x))
+        original_core_number = original_core[node]
+        removed_count = 0
+
+        G_temp = G.copy()
+        for neighbor in neighbors:
+            G_temp.remove_node(neighbor)
+            removed_count+=1
+            new_core = nx.core_number(G_temp)
+            if new_core.get(node, 0)  <  original_core_number:
+                core_strength[node] = removed_count
+                break
+            else:
+                core_strength[node] = len(neighbors)
+    return core_strength
+
 '''Core influence measures a node's impact on the core numbers of its neighbours.'''
 def compute_core_influence(G):
     core_influence = {}
@@ -92,10 +120,10 @@ def compute_Core_Influence_Strength_metric(core_strength, core_influence, graph_
     
     return CIS
 
-def write_core_resilience_to_csv(Graph, core_number, core_strength, core_influence, CIS):
+def write_core_resilience_to_csv(Graph, core_number, core_strength, core_influence, CIS, sample_name=''):
     # Extract all unique nodes from the keys of one of the dictionaries
     nodes = list(core_number.keys())
-    core_output_file='core_resilience.csv'
+    core_output_file=f'core_resilience_{sample_name}.csv'
     # Define header
     header = ['Node', 'Core Number', 'Core Strength', 'Core Influence']
 
@@ -117,7 +145,7 @@ def write_core_resilience_to_csv(Graph, core_number, core_strength, core_influen
         writer.writerows(rows)
 
 
-    CIS_output_filename = 'CIS_metric.csv'
+    CIS_output_filename = f'CIS_metric.csv'
     file_exists = os.path.isfile(f'Analyses/{CIS_output_filename}')
     print(f"Core_Influence Strength Metric: {CIS}")
     header = ['Name', 'Core-Influence Strength Metric']
@@ -125,7 +153,7 @@ def write_core_resilience_to_csv(Graph, core_number, core_strength, core_influen
         writer = csv.DictWriter(file, delimiter=';', fieldnames=header)
         if not file_exists:
             writer.writeheader()
-        writer.writerow({'Name': Graph.name, 'Core-Influence Strength Metric': CIS})
+        writer.writerow({'Name': f'{Graph.name}_{sample_name}', 'Core-Influence Strength Metric': CIS})
 
     print(f"Core resilience data written to {CIS_output_filename}")
 

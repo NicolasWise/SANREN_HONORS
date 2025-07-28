@@ -29,7 +29,22 @@ def populate_graph_v1(filename):
     G.name = filename
 
     for link_pair in data:
-        if len(link_pair) ==2:
+        if len(link_pair) == 2:
+            source = link_pair[0]['hostname']
+            target = link_pair[1]['hostname']
+            G.add_edge(source, target)
+    
+    return G
+
+def populate_graph_v1_sampling(filename):
+    with open(filename) as f:
+        data = json.load(f)
+
+    G = nx.Graph()
+    G.name = filename
+
+    for link_pair in data:
+        if len(link_pair) == 2:
             source = link_pair[0]['hostname']
             target = link_pair[1]['hostname']
             G.add_edge(source, target)
@@ -68,7 +83,11 @@ def identify_top_r_nodes(dict):
 def main():
     filename = 'Graph_files/isis-links.json'
     Graph = populate_graph_v1(filename)
+    graph_size = Graph.size()
+    print(f'{graph_size} edges')
 
+    
+    #Compute Classical Graph Measures
     degree_centrality_dict, closeness_centrality_dict, betweeness_centrality_dict = classical_graph_measures.compute_classical_graph_measures(Graph)
     write_measure_to_csv(degree_centrality_dict, 'Analyses/degree_centrality.csv', 'Degree Centrality')
     write_measure_to_csv(closeness_centrality_dict, 'Analyses/closeness_centrality.csv', 'Closeness Centrality')
@@ -81,20 +100,20 @@ def main():
     write_measure_to_csv(top_closeness_nodes, 'Analyses/top_r_closeness_centrality.csv', 'Closeness Centrality')
 
 
-    '''#Spectral Analysiss
+    #Spectral Analysiss
     eigenvalue_one_cluster_density, algebraic_connectivity, eigenvalue_one_multiplicity, eigenvalue_zero_multiplicity = spectral_analysis.compute_spectral_analysis(Graph)
-    spectral_analysis.write_spectral_to_output_file(Graph, algebraic_connectivity, eigenvalue_one_cluster_density, eigenvalue_one_multiplicity, eigenvalue_zero_multiplicity)'''
+    spectral_analysis.write_spectral_to_output_file(Graph, algebraic_connectivity, eigenvalue_one_cluster_density, eigenvalue_one_multiplicity, eigenvalue_zero_multiplicity)
     
     #Core Resilience Analysis
     core_number, core_strength, core_influence, CIS = core_resilience.compute_core_resilience(Graph)
+    core_resilience.write_core_resilience_to_csv(Graph, core_number, core_strength, core_influence, CIS)
     top_core_numbers = identify_top_r_nodes(core_number)
     top_core_influences = identify_top_r_nodes(core_influence)
     top_core_strengths = identify_top_r_nodes(core_strength)
     write_measure_to_csv(top_core_numbers,'Analyses/top_r_core_numbers.csv', 'Core Number')
     write_measure_to_csv(top_core_influences,'Analyses/top_r_core_influences.csv', 'Core Influence')
     write_measure_to_csv(top_core_strengths,'Analyses/top_r_core_strengths.csv', 'Core Strength')
-    core_resilience.write_core_resilience_to_csv(Graph, core_number, core_strength, core_influence, CIS)
-
+    
     
 if __name__=="__main__":
     main()
