@@ -60,7 +60,7 @@ def plot_graph(Graph, sample_name=''):
     )
     plt.title(f"Graph: {sample_name} ({num_nodes} nodes, {num_edges} edges)")
     plt.tight_layout()
-    plt.savefig(f"Analyses/graph_plot_{sample_name}.png", dpi=300)
+    plt.savefig(f"Plots/graph_plot_{sample_name}.png", dpi=300)
     plt.close()
 
 def write_measure_to_csv(data_dict, filename, metric_name):
