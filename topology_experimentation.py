@@ -5,6 +5,7 @@ from plotter import identify_top_r_nodes
 import spectral_analysis
 import core_resilience
 import classical_graph_measures
+from plotter import plot_graph
 
 def populate_graph_v1_sampling(filename, graph_size):
     with open(filename) as f:
@@ -33,7 +34,9 @@ def main():
         # Number of edges
         num_edges = Graph.size()
         print(f'{num_edges} edges')
-        
+
+        #Plot the graph
+        plot_graph(Graph)
         #Compute Classical Graph Measures
         degree_centrality_dict, closeness_centrality_dict, betweeness_centrality_dict = classical_graph_measures.compute_classical_graph_measures(Graph)
         write_measure_to_csv(degree_centrality_dict, f'Analyses/degree_centrality_{sample_name}.csv', 'Degree Centrality')

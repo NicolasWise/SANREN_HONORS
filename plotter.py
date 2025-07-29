@@ -36,20 +36,6 @@ def populate_graph_v1(filename):
     
     return G
 
-def populate_graph_v1_sampling(filename):
-    with open(filename) as f:
-        data = json.load(f)
-
-    G = nx.Graph()
-    G.name = filename
-
-    for link_pair in data:
-        if len(link_pair) == 2:
-            source = link_pair[0]['hostname']
-            target = link_pair[1]['hostname']
-            G.add_edge(source, target)
-    
-    return G
 
 def export_graph(Graph):
     with open(f"{Graph.name}_graph_edges.csv", "w", newline='') as file:
@@ -58,8 +44,24 @@ def export_graph(Graph):
         for u, v in Graph.edges():
             writer.writerow([u, v])
 
-def plot_graph(Graph):
-    plt.plot(Graph)
+def plot_graph(Graph, sample_name=''):
+    num_nodes = Graph.number_of_nodes()
+    num_edges = Graph.number_of_edges()
+    layout =  nx.spring_layout(Graph)
+    node_size = 150
+    font_size = 8
+    plt.figure(figsize=(10,8))
+    nx.draw(
+        Graph, layout, with_labels=True,
+        node_size=node_size,
+        font_size=font_size,
+        node_color='skyblue',
+        edge_color='gray'
+    )
+    plt.title(f"Graph: {sample_name} ({num_nodes} nodes, {num_edges} edges)")
+    plt.tight_layout()
+    plt.savefig(f"Analyses/graph_plot_{sample_name}.png", dpi=300)
+    plt.close()
 
 def write_measure_to_csv(data_dict, filename, metric_name):
     with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
