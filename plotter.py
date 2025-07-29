@@ -88,6 +88,8 @@ def main():
     graph_size = Graph.size()
     print(f'{graph_size} edges')
 
+    plot_graph(Graph, sample_name='main')
+
     
     #Compute Classical Graph Measures
     degree_centrality_dict, closeness_centrality_dict, betweeness_centrality_dict = classical_graph_measures.compute_classical_graph_measures(Graph)

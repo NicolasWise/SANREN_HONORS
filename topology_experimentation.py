@@ -36,7 +36,7 @@ def main():
         print(f'{num_edges} edges')
 
         #Plot the graph
-        plot_graph(Graph)
+        plot_graph(Graph, sample_name)
         #Compute Classical Graph Measures
         degree_centrality_dict, closeness_centrality_dict, betweeness_centrality_dict = classical_graph_measures.compute_classical_graph_measures(Graph)
         write_measure_to_csv(degree_centrality_dict, f'Analyses/degree_centrality_{sample_name}.csv', 'Degree Centrality')

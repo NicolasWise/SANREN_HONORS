@@ -139,7 +139,7 @@ def write_core_resilience_to_csv(Graph, core_number, core_strength, core_influen
         rows.append(row)
 
     # Write to CSV (use semicolon for Excel compatibility)
-    with open(f"Analyses/{core_output_file}", 'a', newline='', encoding='utf-8') as csvfile:
+    with open(f"Analyses/{core_output_file}", 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=header, delimiter=';')
         writer.writeheader()
         writer.writerows(rows)
