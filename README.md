@@ -29,7 +29,18 @@
                 - write these to a json
                 - create visualisations
                 - write spectral, core resilience, classical measures, top r measures for each generated graph.
-                
+
+        - Findings:
+            - Compare each metric's average value, e.g., betweeness centrality sample 1, 2, 3, ..., 8, to graph size.
+                - Take each sample, calculate the average, store it and plot it to a line graph. 
+                - This gives an average metric accross the graph samples.
+
+            - Plot each samples CIS metric to a graph
+            - Plot each samples spectral results to a graph:
+                - Algebraic connectivity of each sample
+                - Multiplicity of the one eigenvalue of each sample
+                - Density of eigenvalues around 1 of each sample
+                - Multiplicity of the zero eigenvalue of each sample
         
     
     Phase 2:

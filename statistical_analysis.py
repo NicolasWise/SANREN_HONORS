@@ -46,6 +46,7 @@ def sample_statistical_analysis():
 
                 '''Apply Spearman rank correlation test'''
                 coef, p = spearmanr(ranks_i, ranks_j)
+                # Change '{coef:.3f},' to '{coef:.3f};'
                 output = f"Spearman correlation between {name_i} and {name_j}: {coef:.3f}, p = {p:.3g}"
                 write_test_to_csv(output, filename='Analyses/Spearman_rank_test_samples.csv', first=first_write)
                 first_write = False
