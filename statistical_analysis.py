@@ -1,5 +1,6 @@
 import csv
 from scipy.stats import spearmanr
+import os
 
 def read_nodes_from_csv(filename):
     with open(filename, 'r', encoding='utf-8') as f:
@@ -7,11 +8,14 @@ def read_nodes_from_csv(filename):
         next(reader)  # Skip header
         return [row[0] for row in reader]
     
-def write_test_to_csv(output, filename, first):
-    mode = 'w' if first else 'a'
-    with open(filename, mode, encoding='utf-8', newline='') as file:
+def write_test_to_csv(rows, filename, first):
+    header = ['Sample Name 1', 'Sample Name 2', 'Spearman Coefficient', 'P-value']
+    write_header = not os.path.exists(filename)
+    with open(filename, 'a', encoding='utf-8', newline='') as file:
         writer = csv.writer(file, delimiter=';')
-        writer.writerow([output])
+        if write_header:
+            writer.writerow(header)
+        writer.writerow(rows)
 
 def sample_statistical_analysis():
     metrics = ['betweeness_centrality','closeness_centrality','degree_centrality', 'core_influences', 'core_numbers', 'core_strengths']
@@ -24,7 +28,7 @@ def sample_statistical_analysis():
             name = f'{metric}_{sample}'
             datasets[name] = read_nodes_from_csv(f'Analyses/top_r_{name}.csv')
 
-        
+        rows_to_write = []
         for i in range(len(metrics)):
             for j in range(i+1, len(metrics)):
                 name_i = f'{metrics[i]}_{sample}'
@@ -47,9 +51,10 @@ def sample_statistical_analysis():
                 '''Apply Spearman rank correlation test'''
                 coef, p = spearmanr(ranks_i, ranks_j)
                 # Change '{coef:.3f},' to '{coef:.3f};'
-                output = f"Spearman correlation between {name_i} and {name_j}: {coef:.3f}, p = {p:.3g}"
-                write_test_to_csv(output, filename='Analyses/Spearman_rank_test_samples.csv', first=first_write)
-                first_write = False
+                rows_to_write.append([name_i, name_j,f" {coef:.3f}", f"p = {p:.3g}"])
+
+        write_test_to_csv(rows_to_write, filename='Analyses/Spearman_rank_test_samples.csv', first=first_write)
+
 
 def main_statistical_analysis():
     names = ['betweeness_centrality','closeness_centrality','degree_centrality', 'core_influences', 'core_numbers', 'core_strengths']
