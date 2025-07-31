@@ -8,6 +8,3 @@ Graph_files/isis-links.json_sample6;-1.0896235223316168e-15;34;0.141078838174273
 Graph_files/isis-links.json_sample7;3.809036589803966e-16;31;0.11923076923076924;3
 Graph_files/isis-links.json_sample8;0.023789348363202335;25;0.08992805755395683;1
 Graph_files/isis-links.json_;0.024682839418305763;23;0.08214285714285714;1
-
-Name;Algebraic Connectivity;Multiplicity of the one eigenvalue;Density of eigenvalues around 1;Multiplicity of the zero eigenvalue
-Graph_files/isis-links.json_;0.024682839418305763;23;0.08214285714285714;1
