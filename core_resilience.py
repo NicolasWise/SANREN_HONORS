@@ -53,7 +53,10 @@ def compute_core_strength_v0(G):
 
 ''' Greedy Approach: This core strength method removes the weaker neighbors first to reduce 
     complexity. Its complexity is O(n.d). The core strengths are less accurate, but decent approximations 
-    of a node's core strenght but much faster for large graphs'''
+    of a node's core strenght but much faster for large graphs
+    
+    Core strength measures how many nodes must be removed in order to reduce a node's core number.
+    This is a resilience metric and gives an approximation of a node's resilience against network failures.'''
 def compute_core_strength(G):
     core_strength = {}
     original_core = nx.core_number(G)
@@ -77,7 +80,7 @@ def compute_core_strength(G):
                 core_strength[node] = len(neighbors)
     return core_strength
 
-'''Core influence measures a node's impact on the core numbers of its neighbours.'''
+'''Core influence measures a node's impact on the core numbers of its neighbours. A centrality measure'''
 def compute_core_influence(G):
     core_influence = {}
     for node in G.nodes:

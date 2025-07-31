@@ -18,46 +18,46 @@ def write_test_to_csv(rows, filename, first):
         writer.writerow(rows)
 
 def sample_statistical_analysis():
-    metrics = ['betweeness_centrality','closeness_centrality','degree_centrality', 'core_influences', 'core_numbers', 'core_strengths']
+    classical_metrics = ['betweeness_centrality','closeness_centrality','degree_centrality']
+    target_metric = 'core_influences'
     samples = ['sample1','sample2','sample3','sample4','sample5','sample6','sample7','sample8']
     first_write = True
 
     for sample in samples:
         datasets = {}
-        for metric in metrics:
+        for metric in classical_metrics + [target_metric]:
             name = f'{metric}_{sample}'
             datasets[name] = read_nodes_from_csv(f'Analyses/top_r_{name}.csv')
 
         rows_to_write = []
-        for i in range(len(metrics)):
-            for j in range(i+1, len(metrics)):
-                name_i = f'{metrics[i]}_{sample}'
-                name_j = f'{metrics[j]}_{sample}'
-                list_i = datasets[name_i]
-                list_j = datasets[name_j]
+        for classical_metric in classical_metrics:
+            name_i = f'{target_metric}_{sample}'
+            name_j = f'{classical_metric}_{sample}'
+            list_i = datasets[name_i]
+            list_j = datasets[name_j]
 
-                '''Intersect and rank:
-                    - This ensures that the spearman rank correlation test
-                    only test the ranks of the common nodes between each dataset
-                    due to the partial overlap in nodes between the datasets.'''
-                common_nodes = list(set(list_i).intersection(list_j))
-                if not common_nodes:
-                    print(f"No overlap between {name_i} and {name_j}")
-                    continue
-                '''Re-rank common nodes between datasets.'''
-                ranks_i = [list_i.index(node) for node in common_nodes]
-                ranks_j = [list_j.index(node) for node in common_nodes]
+            '''Intersect and rank:
+                - This ensures that the spearman rank correlation test
+                only test the ranks of the common nodes between each dataset
+                due to the partial overlap in nodes between the datasets.'''
+            common_nodes = list(set(list_i).intersection(list_j))
+            if not common_nodes:
+                print(f"No overlap between {name_i} and {name_j}")
+                continue
+            '''Re-rank common nodes between datasets.'''
+            ranks_i = [list_i.index(node) for node in common_nodes]
+            ranks_j = [list_j.index(node) for node in common_nodes]
 
-                '''Apply Spearman rank correlation test'''
-                coef, p = spearmanr(ranks_i, ranks_j)
-                # Change '{coef:.3f},' to '{coef:.3f};'
-                rows_to_write.append([name_i, name_j,f" {coef:.3f}", f"p = {p:.3g}"])
+            '''Apply Spearman rank correlation test'''
+            coef, p = spearmanr(ranks_i, ranks_j)
+            # Change '{coef:.3f},' to '{coef:.3f};'
+            rows_to_write.append([name_i, name_j,f" {coef:.3f}", f"p = {p:.3g}"])
 
         write_test_to_csv(rows_to_write, filename='Analyses/Spearman_rank_test_samples.csv', first=first_write)
 
 
 def main_statistical_analysis():
-    names = ['betweeness_centrality','closeness_centrality','degree_centrality', 'core_influences', 'core_numbers', 'core_strengths']
+    names = ['betweeness_centrality','closeness_centrality','degree_centrality', 'core_influences']
     datasets = {}
 
     for name in names:
