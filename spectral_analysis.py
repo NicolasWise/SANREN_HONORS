@@ -11,7 +11,7 @@ def compute_spectral_analysis(G):
     # Sorted to make algebraic connectivity derivation easier.
     eigenvalues = np.sort(np.linalg.eigvalsh(L))
 
-    # Second highest eiganvalue
+    # Second highest eigenvalue
     algebraic_connectivity = eigenvalues[1]
 
     # Count how many eigenvalues fall in the range [0.9, 1.1]
