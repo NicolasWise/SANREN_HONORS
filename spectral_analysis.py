@@ -33,11 +33,11 @@ def write_spectral_to_output_file(graph, algebraic_connectivity, eigenvalue_one_
         data = [{'Name': f'{graph.name}_{sample_name}', 'Algebraic Connectivity': algebraic_connectivity, 'Multiplicity of the one eigenvalue':eigenvalue_one_multiplicity,
            'Density of eigenvalues around 1':eigenvalue_one_cluster_density, 'Multiplicity of the zero eigenvalue':eigenvalue_zero_multiplicity}]
     elif tgf:
-        output_file= f'Analyses/TGF_Files/TGF_spectral_results.csv'
+        output_file= f'Analyses/TGF_Files/{graph.name}_spectral_results.csv'
         data = [{'Name': f'{graph.name}', 'Algebraic Connectivity': algebraic_connectivity, 'Multiplicity of the one eigenvalue':eigenvalue_one_multiplicity,
            'Density of eigenvalues around 1':eigenvalue_one_cluster_density, 'Multiplicity of the zero eigenvalue':eigenvalue_zero_multiplicity}]
     elif json:
-        output_file = f'Analyses/JSON_Files/JSON_spectral_results.csv'
+        output_file = f'Analyses/JSON_Files/{graph.name}_spectral_results.csv'
         data = [{'Name': f'{graph.name}', 'Algebraic Connectivity': algebraic_connectivity, 'Multiplicity of the one eigenvalue':eigenvalue_one_multiplicity,
            'Density of eigenvalues around 1':eigenvalue_one_cluster_density, 'Multiplicity of the zero eigenvalue':eigenvalue_zero_multiplicity}]
     # Prepare data for CSV
