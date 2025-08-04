@@ -2,6 +2,11 @@ import networkx as nx
 import itertools
 import csv
 import os
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy import integrate
+from scipy.sparse import csr_matrix
+from scipy.sparse.linalg import eigs
 
 ''' Exhaustive search: This method gives a more accurate approximation for core strengths.
     But, its complexity is O(n2^d) because it generates all combinations of neighbors for each node and is therefore ineffecient for large graphs'''
@@ -56,8 +61,11 @@ def compute_core_strength_v0(G):
     of a node's core strenght but much faster for large graphs
     
     Core strength measures how many nodes must be removed in order to reduce a node's core number.
-    This is a resilience metric and gives an approximation of a node's resilience against network failures.'''
-def compute_core_strength(G):
+    This is a resilience metric and gives an approximation of a node's resilience against network failures.
+    
+    The core strength of a node is a measure of how likely its core number will decreas 
+    when edges are deleted from the network. '''
+def compute_core_strength_v1(G):
     core_strength = {}
     original_core = nx.core_number(G)
 
@@ -80,8 +88,21 @@ def compute_core_strength(G):
                 core_strength[node] = len(neighbors)
     return core_strength
 
-'''Core influence measures a node's impact on the core numbers of its neighbours. A centrality measure'''
-def compute_core_influence(G):
+# --- Core Strength (theoretical formula) ---
+def compute_core_strength(G, core_num):
+    """
+    Core Strength: CS(u) = |{v ∈ Γ(u): κ(v) ≥ κ(u)}| - κ(u) + 1
+    """
+    CS = {}
+    for u in G.nodes():
+        neighbors_ge = sum(1 for v in G.neighbors(u) if core_num[v] >= core_num[u])
+        CS[u] = neighbors_ge - core_num[u] + 1
+    return CS
+
+'''Core influence measures a node's impact on the core numbers of its neighbours. A centrality measure.
+    The core influence of a node is a measure of the extent to which nodes with lower core 
+    numbers depend on that node for their own core numbers. '''
+def compute_core_influence_v0(G):
     core_influence = {}
     for node in G.nodes:
         '''Compute original core numbers, create copy of graph, remove this node,
@@ -103,7 +124,76 @@ def compute_core_influence(G):
 
     return core_influence
 
-def compute_Core_Influence_Strength_metric(core_strength, core_influence, graph_name):
+
+# --- Core Influence (eigenvector-based) ---
+def compute_core_influence(G, core_num, approximate=False):
+    """
+    Compute Core Influence using eigenvector of M matrix.
+    If approximate=True, ignore contributions from equal-core neighbors.
+    """
+    n = len(G.nodes())
+    node_index = {node: i for i, node in enumerate(G.nodes())}
+    
+    # Build sparse matrix M
+    data, rows, cols = [], [], []
+    for u, v in G.edges():
+        ku, kv = core_num[u], core_num[v]
+        # u influences v
+        if ku <= kv:
+            denom = sum(1 for w in G.neighbors(v) if core_num[w] >= core_num[v])
+            if denom > 0:
+                if not (approximate and ku == kv):
+                    rows.append(node_index[u])
+                    cols.append(node_index[v])
+                    data.append(1.0/denom)
+        # v influences u
+        if kv <= ku:
+            denom = sum(1 for w in G.neighbors(u) if core_num[w] >= core_num[u])
+            if denom > 0:
+                if not (approximate and kv == ku):
+                    rows.append(node_index[v])
+                    cols.append(node_index[u])
+                    data.append(1.0/denom)
+    
+    # Add diagonal 1
+    for u in G.nodes():
+        idx = node_index[u]
+        rows.append(idx)
+        cols.append(idx)
+        data.append(1.0)
+    
+    M = csr_matrix((data, (rows, cols)), shape=(n, n))
+    
+    # Eigenvector (largest eigenvalue)
+    vals, vecs = eigs(M, k=1, which='LM')
+    r = np.real(vecs[:, 0])
+    r = np.abs(r)  # ensure non-negative
+    r = r / np.linalg.norm(r)
+    
+    return {node: r[i] for node, i in node_index.items()}
+
+# --- Core Influence-Strength metric ---
+def compute_CIS(G, f=0.9, approximate_CI=False):
+    """
+    Compute Core Influence-Strength (CIS_f)
+    f: percentile threshold (0 < f <= 1)
+    """
+    core_num = nx.core_number(G)
+    CS = compute_core_strength(G, core_num)
+    CI = compute_core_influence(G, core_num, approximate=approximate_CI)
+    
+    # f-th percentile of CI
+    CI_values = np.array(list(CI.values()))
+    threshold = np.percentile(CI_values, f * 100)
+    
+    # Nodes with CI >= threshold
+    S_f = [u for u, ci in CI.items() if ci >= threshold]
+    if not S_f:
+        return 0
+    
+    return np.mean([CS[u] for u in S_f])
+
+def compute_Core_Influence_Strength_metric_v0(core_strength, core_influence, graph_name):
     '''The Core Influence-Strength (CIS) metric, defined as the average core strength of the top
       r % most influential nodes provides a measure of network resilience.'''
     top_influential_nodes = {}
@@ -164,11 +254,11 @@ def compute_core_resilience(G):
     '''A node's core number is the highest k for which it remains in the k-core, reflecting its structural depth and resilience.'''
     core_number = nx.core_number(G)
 
-    core_strength = compute_core_strength(G)
+    core_strength = compute_core_strength(G, core_number)
 
-    core_influence = compute_core_influence(G)
+    core_influence = compute_core_influence(G, core_number)
     
-    CIS = compute_Core_Influence_Strength_metric(core_strength, core_influence, G.name)
+    CIS = compute_CIS(G)
 
     return core_number, core_strength, core_influence, CIS
 
