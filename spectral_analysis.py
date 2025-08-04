@@ -49,7 +49,7 @@ def write_spectral_to_output_file(graph, algebraic_connectivity, eigenvalue_one_
     # Write to CSV (append if exists, else create)
     file_exists = not os.path.isfile(output_file)
 
-    with open(f"{output_file}", 'a', newline='') as csvfile:
+    with open(f"{output_file}", 'w', newline='') as csvfile:
         csv_writer = csv.DictWriter(csvfile, fieldnames=header, delimiter=';')
         if file_exists:
             csv_writer.writeheader() # Writes the header row

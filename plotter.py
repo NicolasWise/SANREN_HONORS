@@ -22,7 +22,7 @@ def populate_graph_v0(filename):
 
     return G
 
-def populate_graph_v1(filename):
+def populate_graph_json(filename):
     with open(filename) as f:
         data = json.load(f)
 
@@ -98,9 +98,8 @@ def write_measure_to_csv(data_dict, filename, metric_name):
 
 
 
-def identify_top_r_nodes(dict):
+def identify_top_r_nodes(dict, r = 45):
     top_nodes = {}
-    r = 10
     count = len(dict)
     top_n = max(1, int(count*r/100))
     sorted_nodes = sorted(dict.items(), key=lambda x:x[1], reverse=True)
@@ -110,9 +109,20 @@ def identify_top_r_nodes(dict):
 
     return top_nodes
 
+def identify_bottom_r_nodes(dict, r = 45):
+    bottom_nodes = {}
+    count = len(dict)
+    top_n = max(1, int(count*r/100))
+    sorted_nodes = sorted(dict.items(), key=lambda x:x[1], reverse=False)
+    
+    for node, value in sorted_nodes[:top_n]:
+        bottom_nodes[node] = value
+
+    return bottom_nodes
+
 def main():
     #input = 'bfn.tgf'
-    inputs = ['isis-links.json', 'bfn.tgf', 'cpt.tgf', 'dur.tgf', 'els.tgf', 'jnb.tgf', 'pta.tgf', 'pzb.tgf', 'vdp.tgf']
+    inputs = ['bfn.tgf', 'cpt.tgf', 'dur.tgf', 'els.tgf', 'jnb.tgf', 'pta.tgf', 'pzb.tgf', 'vdp.tgf', 'isis-links.json',]
     for input in inputs:
         filename = f'Graph_files/{input}'
 
@@ -129,10 +139,45 @@ def main():
             spectral_analysis.write_spectral_to_output_file(graph, a_G, e1_cluster, e1_mult,e0_mult, tgf=True)
 
             core_number, core_strength, core_influence, CIS = core_resilience.compute_core_resilience(graph)
-            #improve the writing methods
+
+            top_core_numbers = identify_top_r_nodes(core_number, r = 45)
+            top_core_influences = identify_top_r_nodes(core_influence, r = 45)
+            top_core_strengths = identify_top_r_nodes(core_strength, r = 45)
+
+            bottom_core_numbers = identify_bottom_r_nodes(core_number, r = 45)
+            bottom_core_strengths = identify_bottom_r_nodes(core_strength, r = 45)
+            bottom_core_influence = identify_bottom_r_nodes(core_influence, r = 45)
+
+            write_measure_to_csv(top_core_numbers,f'Analyses/TGF_Files/{graph.name}_top_r_core_numbers.csv', 'Core Number')
+            write_measure_to_csv(top_core_influences,f'Analyses/TGF_Files/{graph.name}_top_r_core_influences.csv', 'Core Influence')
+            write_measure_to_csv(top_core_strengths,f'Analyses/TGF_Files/{graph.name}_top_r_core_strengths.csv', 'Core Strength')
+
+            write_measure_to_csv(bottom_core_numbers,f'Analyses/TGF_Files/{graph.name}_bottom_r_core_numbers.csv', 'Core Number')
+            write_measure_to_csv(bottom_core_strengths,f'Analyses/TGF_Files/{graph.name}_bottom_r_core_influences.csv', 'Core Influence')
+            write_measure_to_csv(bottom_core_influence,f'Analyses/TGF_Files/{graph.name}_bottom_r_core_strengths.csv', 'Core Strength')
+
+
+        
             core_resilience.write_core_resilience_to_csv(graph, core_number, core_strength, core_influence, CIS, sample_name=input, tgf=True)
             
             degree_dict, close_dict, bet_dict = classical_graph_measures.compute_classical_graph_measures(graph)
+            
+            top_degree_nodes = identify_top_r_nodes(degree_dict, r = 45)
+            top_closeness_nodes = identify_top_r_nodes(close_dict, r = 45)
+            top_betweeness_nodes = identify_top_r_nodes(bet_dict, r = 45)
+
+            bottom_degree = identify_bottom_r_nodes(degree_dict, r = 45)
+            bottom_closeness = identify_bottom_r_nodes(close_dict, r = 45)
+            bottom_betweeness = identify_bottom_r_nodes(bet_dict, r = 45)
+
+            write_measure_to_csv(top_betweeness_nodes, f'Analyses/TGF_Files/{graph.name}_top_r_betweeness_centrality.csv', 'Betweeness Centrality')
+            write_measure_to_csv(top_degree_nodes, f'Analyses/TGF_Files/{graph.name}_top_r_degree_centrality.csv', 'Degree Centrality')
+            write_measure_to_csv(top_closeness_nodes, f'Analyses/TGF_Files/{graph.name}_top_r_closeness_centrality.csv', 'Closeness Centrality')
+
+            write_measure_to_csv(bottom_degree,f'Analyses/TGF_Files/{graph.name}_bottom_r_betweeness_centrality.csv', 'Betweeness Centrality')
+            write_measure_to_csv(bottom_closeness,f'Analyses/TGF_Files/{graph.name}_bottom_r_degree_centrality.csv', 'Degree Centrality')
+            write_measure_to_csv(bottom_betweeness,f'Analyses/TGF_Files/{graph.name}_bottom_r_closeness_centrality.csv', 'Closenss Centrality')
+
             dicts = {'Degree Centrality': degree_dict,  'Closeness Centrality':close_dict, 'Betweeness Centrality': bet_dict}
             for value, key in dicts.items():
                 write_measure_to_csv(key, f'Analyses/TGF_Files/{value}_{input}.csv', value)
@@ -141,7 +186,7 @@ def main():
             print('json')
             
             filename = 'Graph_files/isis-links.json'
-            graph = populate_graph_v1(filename)
+            graph = populate_graph_json(filename)
             graph_size = graph.size()
             print(f'{graph_size} edges')
 
@@ -153,13 +198,21 @@ def main():
             write_measure_to_csv(degree_centrality_dict, f'Analyses/JSON_Files/{graph.name}_degree_centrality.csv', 'Degree Centrality')
             write_measure_to_csv(closeness_centrality_dict, f'Analyses/JSON_Files/{graph.name}_closeness_centrality.csv', 'Closeness Centrality')
             write_measure_to_csv(betweeness_centrality_dict, f'Analyses/JSON_Files/{graph.name}_betweeness_centrality.csv', 'Betweeness Centrality')
-            top_degree_nodes = identify_top_r_nodes(degree_centrality_dict)
-            top_closeness_nodes = identify_top_r_nodes(closeness_centrality_dict)
-            top_betweeness_nodes = identify_top_r_nodes(betweeness_centrality_dict)
+            top_degree_nodes = identify_top_r_nodes(degree_centrality_dict, r = 25)
+            top_closeness_nodes = identify_top_r_nodes(closeness_centrality_dict, r = 25)
+            top_betweeness_nodes = identify_top_r_nodes(betweeness_centrality_dict, r = 25)
+
+            bottom_degree_nodes = identify_bottom_r_nodes(degree_centrality_dict, r=25)
+            bottom_close_nodes = identify_bottom_r_nodes(closeness_centrality_dict, r =25)
+            bottom_betweeness_nodes = identify_bottom_r_nodes(betweeness_centrality_dict, r = 25)
+
             write_measure_to_csv(top_betweeness_nodes, f'Analyses/JSON_Files/{graph.name}_top_r_betweeness_centrality.csv', 'Betweeness Centrality')
             write_measure_to_csv(top_degree_nodes, f'Analyses/JSON_Files/{graph.name}_top_r_degree_centrality.csv', 'Degree Centrality')
             write_measure_to_csv(top_closeness_nodes, f'Analyses/JSON_Files/{graph.name}_top_r_closeness_centrality.csv', 'Closeness Centrality')
 
+            write_measure_to_csv(bottom_betweeness_nodes, f'Analyses/JSON_Files/{graph.name}_bottom_r_betweeness_centrality.csv', 'Betweeness Centrality')
+            write_measure_to_csv(bottom_degree_nodes, f'Analyses/JSON_Files/{graph.name}_bottom_r_degree_centrality.csv', 'Degree Centrality')
+            write_measure_to_csv(bottom_close_nodes, f'Analyses/JSON_Files/{graph.name}_bottom_r_closeness_centrality.csv', 'Closeness Centrality')
 
             #Spectral Analysiss
             eigenvalues, eigenvalue_one_cluster_density, algebraic_connectivity, eigenvalue_one_multiplicity, eigenvalue_zero_multiplicity = spectral_analysis.compute_spectral_analysis(graph)
@@ -168,12 +221,23 @@ def main():
             #Core Resilience Analysis
             core_number, core_strength, core_influence, CIS = core_resilience.compute_core_resilience(graph)
             core_resilience.write_core_resilience_to_csv(graph, core_number, core_strength, core_influence, CIS, json=True)
-            top_core_numbers = identify_top_r_nodes(core_number)
-            top_core_influences = identify_top_r_nodes(core_influence)
-            top_core_strengths = identify_top_r_nodes(core_strength)
+            top_core_numbers = identify_top_r_nodes(core_number, r = 25)
+            top_core_influences = identify_top_r_nodes(core_influence, r = 25)
+            top_core_strengths = identify_top_r_nodes(core_strength, r = 25)
+
+            bottom_core_numbers = identify_bottom_r_nodes(core_number, r = 25)
+            bottom_core_influences = identify_bottom_r_nodes(core_influence, r = 25)
+            bottom_core_strengths = identify_bottom_r_nodes(core_strength, r = 25)
+
             write_measure_to_csv(top_core_numbers,f'Analyses/JSON_Files/{graph.name}_top_r_core_numbers.csv', 'Core Number')
             write_measure_to_csv(top_core_influences,f'Analyses/JSON_Files/{graph.name}_top_r_core_influences.csv', 'Core Influence')
             write_measure_to_csv(top_core_strengths,f'Analyses/JSON_Files/{graph.name}_top_r_core_strengths.csv', 'Core Strength')
+
+            write_measure_to_csv(bottom_core_numbers,f'Analyses/JSON_Files/{graph.name}_bottom_r_core_numbers.csv', 'Core Number')
+            write_measure_to_csv(bottom_core_influences,f'Analyses/JSON_Files/{graph.name}_bottom_r_core_influences.csv', 'Core Influence')
+            write_measure_to_csv(bottom_core_strengths,f'Analyses/JSON_Files/{graph.name}_bottom_r_core_strengths.csv', 'Core Strength')
+
+            ### Must apply bottom r nodes
             
         elif filetype == 'txt':
             print('txt')

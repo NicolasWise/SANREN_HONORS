@@ -241,7 +241,7 @@ def write_core_resilience_to_csv(graph, core_number, core_strength, core_influen
 
     write_header = not os.path.exists(output_file)
     # Write to CSV (use semicolon for Excel compatibility)
-    with open(f"{output_file}", 'a', newline='', encoding='utf-8') as csvfile:
+    with open(f"{output_file}", 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=header, delimiter=';')
         if write_header:
             writer.writeheader()
