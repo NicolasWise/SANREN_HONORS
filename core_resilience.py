@@ -216,7 +216,10 @@ def compute_Core_Influence_Strength_metric_v0(core_strength, core_influence, gra
 def write_core_resilience_to_csv(Graph, core_number, core_strength, core_influence, CIS, sample_name=''):
     # Extract all unique nodes from the keys of one of the dictionaries
     nodes = list(core_number.keys())
-    core_output_file=f'core_resilience_{sample_name}.csv'
+    if sample_name != '':
+        core_output_file=f'Sample_Experimentation/core_resilience_{sample_name}.csv'
+    else:
+        core_output_file=f'core_resilience.csv'
     # Define header
     header = ['Node', 'Core Number', 'Core Strength', 'Core Influence']
 
@@ -231,8 +234,9 @@ def write_core_resilience_to_csv(Graph, core_number, core_strength, core_influen
         }
         rows.append(row)
 
+    write_header = not os.path.exists(core_output_file)
     # Write to CSV (use semicolon for Excel compatibility)
-    with open(f"Analyses/{core_output_file}", 'w', newline='', encoding='utf-8') as csvfile:
+    with open(f"Analyses/{core_output_file}", 'a', newline='', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=header, delimiter=';')
         writer.writeheader()
         writer.writerows(rows)

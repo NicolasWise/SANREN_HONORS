@@ -28,7 +28,10 @@ def compute_spectral_analysis(G):
     return eigenvalue_one_cluster_density, algebraic_connectivity, eigenvalue_one_multiplicity, eigenvalue_zero_multiplicity
 
 def write_spectral_to_output_file(G, algebraic_connectivity, eigenvalue_one_cluster_density, eigenvalue_one_multiplicity, eigenvalue_zero_multiplicity, sample_name=''):
-    output_file = 'spectral_results.csv'
+    if sample_name:
+        output_file = 'Sample_Experimentation/spectral_results.csv'
+    else:
+        output_file= 'spectral_results.csv'
     # Prepare data for CSV
     data = [{'Name': f'{G.name}_{sample_name}', 'Algebraic Connectivity': algebraic_connectivity, 'Multiplicity of the one eigenvalue':eigenvalue_one_multiplicity,
            'Density of eigenvalues around 1':eigenvalue_one_cluster_density, 'Multiplicity of the zero eigenvalue':eigenvalue_zero_multiplicity}]
@@ -37,11 +40,11 @@ def write_spectral_to_output_file(G, algebraic_connectivity, eigenvalue_one_clus
               'Density of eigenvalues around 1', 'Multiplicity of the zero eigenvalue']
 
     # Write to CSV (append if exists, else create)
-    file_exists = os.path.isfile(output_file)
+    file_exists = not os.path.isfile(output_file)
 
     with open(f"Analyses/{output_file}", 'a', newline='') as csvfile:
         csv_writer = csv.DictWriter(csvfile, fieldnames=header, delimiter=';')
-        if not file_exists:
+        if file_exists:
             csv_writer.writeheader() # Writes the header row
         csv_writer.writerows(data)
 

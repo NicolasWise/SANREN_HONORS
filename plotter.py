@@ -125,12 +125,11 @@ def main():
             
             core_number, core_strength, core_influence, CIS = core_resilience.compute_core_resilience(graph)
             #improve the writing methods
-            core_resilience.write_core_resilience_to_csv(graph, core_number, core_strength, core_influence, CIS)
+            core_resilience.write_core_resilience_to_csv(graph, core_number, core_strength, core_influence, CIS, sample_name=input)
             
             degree_dict, close_dict, bet_dict = classical_graph_measures.compute_classical_graph_measures(graph)
             dicts = {'Degree Centrality': degree_dict,  'Closeness Centrality':close_dict, 'Betweeness Centrality': bet_dict}
             for value, key in dicts.items():
-                print(f'{value}: {key}')
                 write_measure_to_csv(key, f'Analyses/TGF_Files/{value}_{input}.csv', value)
             
 
