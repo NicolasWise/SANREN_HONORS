@@ -213,13 +213,18 @@ def compute_Core_Influence_Strength_metric_v0(core_strength, core_influence, gra
     
     return CIS
 
-def write_core_resilience_to_csv(Graph, core_number, core_strength, core_influence, CIS, sample_name=''):
+def write_core_resilience_to_csv(graph, core_number, core_strength, core_influence, CIS, sample_name='',sample=False, tgf=False, json=False):
     # Extract all unique nodes from the keys of one of the dictionaries
     nodes = list(core_number.keys())
-    if sample_name != '':
-        core_output_file=f'Sample_Experimentation/core_resilience_{sample_name}.csv'
-    else:
-        core_output_file=f'core_resilience.csv'
+    if sample:
+        output_file = f'Analyses/Samples/{sample_name}_{graph.name}_core_resilience_metrics.csv'
+        CIS_output_filename = f'Analyses/Samples/CIS_metric.csv'
+    elif tgf:
+        output_file= f'Analyses/TGF_Files/{graph.name}_core_resilience_metrics.csv'
+        CIS_output_filename = f'Analyses/TGF_Files/CIS_metric.csv'
+    elif json:
+        output_file = f'Analyses/JSON_Files/{graph.name}_core_resilience_metrics.csv'
+        CIS_output_filename = f'Analyses/TGF_Files/CIS_metric.csv'
     # Define header
     header = ['Node', 'Core Number', 'Core Strength', 'Core Influence']
 
@@ -234,23 +239,24 @@ def write_core_resilience_to_csv(Graph, core_number, core_strength, core_influen
         }
         rows.append(row)
 
-    write_header = not os.path.exists(core_output_file)
+    write_header = not os.path.exists(output_file)
     # Write to CSV (use semicolon for Excel compatibility)
-    with open(f"Analyses/{core_output_file}", 'a', newline='', encoding='utf-8') as csvfile:
+    with open(f"{output_file}", 'a', newline='', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=header, delimiter=';')
-        writer.writeheader()
+        if write_header:
+            writer.writeheader()
         writer.writerows(rows)
 
 
-    CIS_output_filename = f'CIS_metric.csv'
-    file_exists = os.path.isfile(f'Analyses/{CIS_output_filename}')
+    
+    file_exists = os.path.isfile(f'{CIS_output_filename}')
     print(f"Core_Influence Strength Metric: {CIS}")
     header = ['Name', 'Core-Influence Strength Metric']
-    with open(f'Analyses/{CIS_output_filename}', "a" ,newline='', encoding='utf-8') as file:
+    with open(f'{CIS_output_filename}', "a" ,newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, delimiter=';', fieldnames=header)
         if not file_exists:
             writer.writeheader()
-        writer.writerow({'Name': f'{Graph.name}_{sample_name}', 'Core-Influence Strength Metric': CIS})
+        writer.writerow({'Name': f'{graph.name}', 'Core-Influence Strength Metric': CIS})
 
     print(f"Core resilience data written to {CIS_output_filename}")
 

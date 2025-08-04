@@ -17,6 +17,8 @@ def write_test_to_csv(rows, filename, first):
             writer.writerow(header)
         writer.writerow(rows)
 
+
+
 def sample_statistical_analysis():
     classical_metrics = ['betweeness_centrality','closeness_centrality','degree_centrality']
     target_metric = 'core_influences'

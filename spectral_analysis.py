@@ -25,16 +25,23 @@ def compute_spectral_analysis(G):
     # Density is just proportion of eigenvalues in the range
     eigenvalue_one_cluster_density = eigenvalue_one_multiplicity / total_eigenvalues
 
-    return eigenvalue_one_cluster_density, algebraic_connectivity, eigenvalue_one_multiplicity, eigenvalue_zero_multiplicity
+    return eigenvalues, eigenvalue_one_cluster_density, algebraic_connectivity, eigenvalue_one_multiplicity, eigenvalue_zero_multiplicity
 
-def write_spectral_to_output_file(G, algebraic_connectivity, eigenvalue_one_cluster_density, eigenvalue_one_multiplicity, eigenvalue_zero_multiplicity, sample_name=''):
-    if sample_name:
-        output_file = 'Sample_Experimentation/spectral_results.csv'
-    else:
-        output_file= 'spectral_results.csv'
-    # Prepare data for CSV
-    data = [{'Name': f'{G.name}_{sample_name}', 'Algebraic Connectivity': algebraic_connectivity, 'Multiplicity of the one eigenvalue':eigenvalue_one_multiplicity,
+def write_spectral_to_output_file(graph, algebraic_connectivity, eigenvalue_one_cluster_density, eigenvalue_one_multiplicity, eigenvalue_zero_multiplicity, sample_name='',sample=False, tgf= False, json=False):
+    if sample:
+        output_file = f'Analyses/Samples/Sample_spectral_results.csv'
+        data = [{'Name': f'{graph.name}_{sample_name}', 'Algebraic Connectivity': algebraic_connectivity, 'Multiplicity of the one eigenvalue':eigenvalue_one_multiplicity,
            'Density of eigenvalues around 1':eigenvalue_one_cluster_density, 'Multiplicity of the zero eigenvalue':eigenvalue_zero_multiplicity}]
+    elif tgf:
+        output_file= f'Analyses/TGF_Files/TGF_spectral_results.csv'
+        data = [{'Name': f'{graph.name}', 'Algebraic Connectivity': algebraic_connectivity, 'Multiplicity of the one eigenvalue':eigenvalue_one_multiplicity,
+           'Density of eigenvalues around 1':eigenvalue_one_cluster_density, 'Multiplicity of the zero eigenvalue':eigenvalue_zero_multiplicity}]
+    elif json:
+        output_file = f'Analyses/JSON_Files/JSON_spectral_results.csv'
+        data = [{'Name': f'{graph.name}', 'Algebraic Connectivity': algebraic_connectivity, 'Multiplicity of the one eigenvalue':eigenvalue_one_multiplicity,
+           'Density of eigenvalues around 1':eigenvalue_one_cluster_density, 'Multiplicity of the zero eigenvalue':eigenvalue_zero_multiplicity}]
+    # Prepare data for CSV
+    
 
     header = ['Name', 'Algebraic Connectivity', 'Multiplicity of the one eigenvalue',
               'Density of eigenvalues around 1', 'Multiplicity of the zero eigenvalue']
@@ -42,28 +49,48 @@ def write_spectral_to_output_file(G, algebraic_connectivity, eigenvalue_one_clus
     # Write to CSV (append if exists, else create)
     file_exists = not os.path.isfile(output_file)
 
-    with open(f"Analyses/{output_file}", 'a', newline='') as csvfile:
+    with open(f"{output_file}", 'a', newline='') as csvfile:
         csv_writer = csv.DictWriter(csvfile, fieldnames=header, delimiter=';')
         if file_exists:
             csv_writer.writeheader() # Writes the header row
         csv_writer.writerows(data)
 
-def plot_spectral_graphs(eigenvalues):
+def plot_spectral_graphs(eigenvalues, graph_name, tgf=False, sample = False, json=False):
     plt.figure(figsize=(8, 4))
     plt.plot(range(len(eigenvalues)), eigenvalues, marker='o')
     plt.axhline(1, color='red', linestyle='--', label='λ = 1')
-    plt.title("Eigenvalues of Laplacian Matrix")
+    if tgf:
+        plt.title(f"Plots/TGF_Files/Eigenvalues_of_Laplacian_Matrix_{graph_name}.png")
+    elif sample:
+        plt.title(f"Plots/Samples/Eigenvalues_of_Laplacian_Matrix_{graph_name}.png")
+    elif json:
+        plt.title(f"Plots/JSON_files/Eigenvalues_of_Laplacian_Matrix_{graph_name}.png")
     plt.xlabel("Index")
     plt.ylabel("Eigenvalue")
     plt.legend()
     plt.grid(True)
-    plt.savefig("Eigenvalues_of_Laplacian_Matrix")
+    if tgf:
+        plt.savefig(f"Plots/TGF_Files/Eigenvalues_of_Laplacian_Matrix_{graph_name}.png")
+    elif sample:
+        plt.savefig(f"Plots/Samples/Eigenvalues_of_Laplacian_Matrix_{graph_name}.png")
+    elif json:
+        plt.savefig(f"Plots/JSON_files/Eigenvalues_of_Laplacian_Matrix_{graph_name}.png")
 
     # Plot eigenvalue distribution
     plt.figure(figsize=(8, 4))
     plt.hist(eigenvalues, bins=10, edgecolor='black')
-    plt.title("Eigenvalue Distribution of the Laplacian")
+    if tgf:
+        plt.title(f"Plots/TGF_Files/Eigenvalue_Distribution_of_Laplacian_Matrix_{graph_name}.png")
+    elif sample:
+        plt.title(f"Plots/Samples/Eigenvalue_Distribution_of_Laplacian_Matrix_{graph_name}.png")
+    elif json:
+        plt.title(f"Plots/JSON_files/Eigenvalue_Distribution_of_Laplacian_Matrix_{graph_name}.png")
     plt.xlabel("Eigenvalue")
     plt.ylabel("Frequency")
     plt.grid(True)
-    plt.savefig("Eigenvalue_Distribution_of_the_Laplacian")
+    if tgf:
+        plt.savefig(f"Plots/TGF_Files/Eigenvalue_Distribution_of_Laplacian_Matrix_{graph_name}.png")
+    elif sample:
+        plt.savefig(f"Plots/Samples/Eigenvalue_Distribution_of_Laplacian_Matrix_{graph_name}.png")
+    elif json:
+        plt.savefig(f"Plots/JSON_files/Eigenvalue_Distribution_of_Laplacian_Matrix_{graph_name}.png")

@@ -11,6 +11,7 @@ def populate_graph_v0(filename):
         data = json.load(f)
 
     G = nx.Graph()
+    #Note this change may need to be
     G.name = filename
 
     for node in data["nodes"]:
@@ -39,7 +40,7 @@ def populate_graph_v1(filename):
 def populate_graph_tgf(filename):
 
     G = nx.Graph()
-    G.name = filename
+    G.name = (filename.split('/'))[2]
 
     with open(filename) as file:
         data = file.read().split('\n#\n')
@@ -63,23 +64,28 @@ def export_graph(Graph):
         for u, v in Graph.edges():
             writer.writerow([u, v])
 
-def plot_graph(Graph, sample_name='', filename = ''):
-    num_nodes = Graph.number_of_nodes()
-    num_edges = Graph.number_of_edges()
-    layout =  nx.spring_layout(Graph)
+def plot_graph(graph, tgf=False, sample = False, json = False):
+    num_nodes = graph.number_of_nodes()
+    num_edges = graph.number_of_edges()
+    layout =  nx.spring_layout(graph)
     node_size = 150
     font_size = 8
     plt.figure(figsize=(10,8))
     nx.draw(
-        Graph, layout, with_labels=True,
+        graph, layout, with_labels=True,
         node_size=node_size,
         font_size=font_size,
         node_color='skyblue',
         edge_color='gray'
     )
-    plt.title(f"Graph: {sample_name} ({num_nodes} nodes, {num_edges} edges)")
+    plt.title(f"Graph: {graph.name} ({num_nodes} nodes, {num_edges} edges)")
     plt.tight_layout()
-    plt.savefig(f"Plots/{filename}.png", dpi=300)
+    if tgf:
+        plt.savefig(f"Plots/TGF_Files/{graph.name}.png", dpi=300)
+    elif sample:
+        plt.savefig(f"Plots/Samples/{graph.name}.png")
+    elif json:
+        plt.savefig(f"Plots/JSON_Files/{graph.name}.png")
     plt.close()
 
 def write_measure_to_csv(data_dict, filename, metric_name):
@@ -88,6 +94,8 @@ def write_measure_to_csv(data_dict, filename, metric_name):
         writer.writerow(['Node', metric_name])
         for node, value in data_dict.items():
             writer.writerow([node, value])
+
+
 
 def identify_top_r_nodes(dict):
     top_nodes = {}
@@ -102,9 +110,6 @@ def identify_top_r_nodes(dict):
     return top_nodes
 
 def main():
-
-    
-
     #input = 'bfn.tgf'
     inputs = ['bfn.tgf', 'cpt.tgf', 'dur.tgf', 'els.tgf', 'jnb.tgf', 'pta.tgf', 'pzb.tgf', 'vdp.tgf']
     for input in inputs:
@@ -116,22 +121,21 @@ def main():
         if filetype == 'tgf':
             filename = f'Graph_files/TGF_Files/{input}'
             graph = populate_graph_tgf(filename)
-            plot_graph(graph,'',filename)
+            plot_graph(graph, tgf=True)
 
-            
-            e1_cluster, a_G, e1_mult, e0_mult=spectral_analysis.compute_spectral_analysis(graph)
-            #improve the writing method
-            spectral_analysis.write_spectral_to_output_file(graph, a_G, e1_cluster, e1_mult,e0_mult)
-            
+            eigenvalues, e1_cluster, a_G, e1_mult, e0_mult=spectral_analysis.compute_spectral_analysis(graph)
+            spectral_analysis.plot_spectral_graphs(eigenvalues, graph_name=graph.name, tgf=True)
+            spectral_analysis.write_spectral_to_output_file(graph, a_G, e1_cluster, e1_mult,e0_mult, tgf=True)
+
             core_number, core_strength, core_influence, CIS = core_resilience.compute_core_resilience(graph)
             #improve the writing methods
-            core_resilience.write_core_resilience_to_csv(graph, core_number, core_strength, core_influence, CIS, sample_name=input)
+            core_resilience.write_core_resilience_to_csv(graph, core_number, core_strength, core_influence, CIS, sample_name=input, tgf=True)
             
             degree_dict, close_dict, bet_dict = classical_graph_measures.compute_classical_graph_measures(graph)
             dicts = {'Degree Centrality': degree_dict,  'Closeness Centrality':close_dict, 'Betweeness Centrality': bet_dict}
             for value, key in dicts.items():
                 write_measure_to_csv(key, f'Analyses/TGF_Files/{value}_{input}.csv', value)
-            
+    
 
 
         elif filetype == 'json':
@@ -142,7 +146,7 @@ def main():
             graph_size = Graph.size()
             print(f'{graph_size} edges')
 
-            plot_graph(Graph, sample_name='main')
+            plot_graph(Graph, sample=True)
 
             
             #Compute Classical Graph Measures
