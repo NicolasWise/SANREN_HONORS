@@ -47,11 +47,16 @@ def write_spectral_to_output_file(graph, algebraic_connectivity, eigenvalue_one_
               'Density of eigenvalues around 1', 'Multiplicity of the zero eigenvalue']
 
     # Write to CSV (append if exists, else create)
-    file_exists = not os.path.isfile(output_file)
+    file_not_exists = not os.path.isfile(output_file)
 
-    with open(f"{output_file}", 'w', newline='') as csvfile:
+    if file_not_exists:
+        mode = 'w'
+    else:
+        mode = 'a'
+
+    with open(f"{output_file}", mode, newline='') as csvfile:
         csv_writer = csv.DictWriter(csvfile, fieldnames=header, delimiter=';')
-        if file_exists:
+        if file_not_exists:
             csv_writer.writeheader() # Writes the header row
         csv_writer.writerows(data)
 
