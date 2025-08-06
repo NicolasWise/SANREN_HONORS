@@ -1,0 +1,8 @@
+removed,remaining,aG,e1_mult,e0_mult,CIS,strategy
+1,8,0.7029294556367258,3,1,1.0,betweeness
+2,7,0.0,1,5,2.0,betweeness
+3,6,0.0,0,5,1.0,betweeness
+4,5,0.0,0,5,1.0,betweeness
+5,4,0.0,0,4,1.0,betweeness
+6,3,0.0,0,3,1.0,betweeness
+7,2,0.0,0,2,1.0,betweeness

@@ -165,10 +165,19 @@ def compute_core_influence(G, core_num, approximate=False):
     M = csr_matrix((data, (rows, cols)), shape=(n, n))
     
     # Eigenvector (largest eigenvalue)
-    vals, vecs = eigs(M, k=1, which='LM')
-    r = np.real(vecs[:, 0])
-    r = np.abs(r)  # ensure non-negative
-    r = r / np.linalg.norm(r)
+    try:  
+        vals, vecs = eigs(M, k=1, which='LM')
+        vec = vecs[:,0]
+    except (TypeError, ValueError) as e:
+        A = M.toarray()
+        all_vals, all_vecs = eigs(A)
+        idx = np.argmax(np.abs(all_vals))
+        vec = all_vecs[:,idx]
+
+
+    # normalize
+    r = np.abs(np.real(vec))
+    r /= np.linalg.norm(r)
     
     return {node: r[i] for node, i in node_index.items()}
 

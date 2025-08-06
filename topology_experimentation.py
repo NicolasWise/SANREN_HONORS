@@ -1,11 +1,11 @@
 import json
 import networkx as nx
-from plotter import write_measure_to_csv
-from plotter import identify_top_r_nodes
+from plotter_v0 import write_measure_to_csv
+from plotter_v0 import identify_top_r_nodes
 import spectral_analysis
 import core_resilience
 import classical_graph_measures
-from plotter import plot_graph
+from plotter_v0 import plot_graph
 
 def populate_graph_v1_sampling(filename, graph_size, graph_name):
     with open(filename) as f:
