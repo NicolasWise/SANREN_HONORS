@@ -24,7 +24,7 @@ def removal_top_k_core_number(graph):
 def removal_top_k_core_influence(graph):
     _, _, core_influence, _ = core.compute_core_resilience(graph)
     return {node:value for node, value in sorted(core_influence.items(), key = lambda x:-x[1])}
-
+#dont use
 def removal_top_k_core_strengths(graph):
     _, core_strength, _, _ = core.compute_core_resilience(graph)
     return {node: value for node, value in sorted(core_strength.items(), key = lambda x:-x[1])}

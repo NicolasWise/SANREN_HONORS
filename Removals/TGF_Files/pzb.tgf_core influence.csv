@@ -1,7 +1,7 @@
 removed,remaining,aG,e1_mult,e0_mult,CIS,strategy
 1,11,0.77546617721373,4,1,2.5,core influence
 2,10,0.0,0,6,2.0,core influence
-3,9,0.0,0,7,1.0,core influence
+3,9,0.0,1,7,2.0,core influence
 4,8,0.0,0,7,1.0,core influence
 5,7,0.0,0,6,1.0,core influence
 6,6,0.0,0,6,1.0,core influence
