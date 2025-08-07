@@ -1,3 +1,4 @@
+import math
 import random
 import os
 
@@ -42,15 +43,19 @@ def removal_top_k_betweeness(graph):
 
 strategies = [
     (removal_random, 'random'),
-    (removal_top_k_core_number, 'core number'),
+    # Baseline measure
+    #(removal_top_k_core_number, 'core number'),
+    # Core Influence - Connectivity measure
     (removal_top_k_core_influence, 'core influence'),
-    (removal_top_k_core_strengths, 'core strength'),
+    # Core strength - Resilience measure
+    #(removal_top_k_core_strengths, 'core strength'),
     (removal_top_k_degree, 'degree'),
     (removal_top_k_betweeness, 'betweeness'),
     (removal_top_k_closenss, 'closeness'),
 ]
 
 def simulate_strategy(graph, strategy_fn, strategy_name, r):
+    '''A list of nodes in order in which the nodes will be removed'''
     order = list(strategy_fn(graph))
     G = graph.copy()
     records = []
@@ -93,6 +98,38 @@ def plot_metric(df, metric, outpath):
     plt.savefig(outpath, dpi=300)
     plt.close()
 
+def plot_metric_small_multiples(df, metric, outpath, max_cols=3):
+    strategies = df['strategy'].unique()
+    n = len(strategies)
+    cols = min(n, max_cols)
+    rows = math.ceil(n / cols)
+    
+    fig, axes = plt.subplots(
+        rows, cols,
+        figsize=(4*cols, 3*rows),
+        sharex=True, sharey=True
+    )
+    # axes might be 1D or 2D
+    axes = axes.flatten() if n > 1 else [axes]
+    
+    for ax, strat in zip(axes, strategies):
+        sub = df[df['strategy'] == strat]
+        ax.plot(sub['removed'], sub[metric], marker='o', linestyle='-')
+        ax.set_title(strat)
+        ax.grid(True)
+        # only label outer edges
+        ax.set_xlabel('Removed')  
+        ax.set_ylabel(metric)
+    
+    # Remove any unused subplots
+    for ax in axes[n:]:
+        fig.delaxes(ax)
+    
+    fig.suptitle(f'{metric} vs Nodes Removed', fontsize=16)
+    fig.tight_layout(rect=[0, 0, 1, 0.95])
+    fig.savefig(outpath, dpi=300)
+    plt.close(fig)
+
 def main():
     inputs = ['bfn.tgf', 'cpt.tgf', 'dur.tgf', 'els.tgf', 'jnb.tgf', 'pta.tgf', 'pzb.tgf', 'vdp.tgf', 'isis-links.json',]
     for filename in inputs:
@@ -115,7 +152,7 @@ def main():
 
         # plot each metric
         for metric in ['aG','e1_mult','e0_mult','CIS']:
-            plot_metric(
+            plot_metric_small_multiples(
                 combined,
                 metric,
                 os.path.join(out_dir, f'{filename}_compare_{metric}.png')

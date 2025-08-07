@@ -74,6 +74,14 @@
         - Recompute spectral analysis to compare changes in connectivity (a(G)), fragmentation (multiplicty of the zero eigenvalue) and redundancy (multiplicity and density of the one eigenvalue). 
         - This helps identify how well core resilience metrics identify and predict structural degredation, node criticality and centrality.
 
+        - Interpretation:
+            - Steeper drop in a(G) means that strategy finds more “critical” nodes.
+            - Faster rise in fragmentation (multiplicity of the zero eigenvalue) shows how quickly the network shatters.
+
+            - Comparing curves tells you:
+                - Does targeting by core-influence break connectivity faster than targeting by betweenness?
+                - Are classical centralities nearly as predictive as your core metrics, or do core metrics consistently outperform them?
+
 
 ## Notes
     - Need to validate core strength
