@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def compute_spectral_analysis(G):
-    print(f"{G.name}:")
     L = nx.laplacian_matrix(G).todense()
    
     # Sorted to make algebraic connectivity derivation easier.

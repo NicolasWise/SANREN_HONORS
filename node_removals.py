@@ -70,6 +70,7 @@ def simulate_strategy(graph, strategy_fn, strategy_name, r):
         core_num, core_str, core_inf, CIS = core.compute_core_resilience(G)
 
         records.append({
+            'node_id': node,
             'removed': k,
             'remaining': G.number_of_nodes(),
             'aG': aG,

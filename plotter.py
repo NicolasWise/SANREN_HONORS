@@ -99,7 +99,7 @@ def write_measure_to_csv(data_dict, filename, metric_name):
         for node, value in data_dict.items():
             writer.writerow([node, value])
 
-def identify_top_r_nodes(dict, r = 45):
+def identify_top_r_nodes_v0(dict, r = 45):
     top_nodes = {}
     count = len(dict)
     top_n = max(1, int(count*r/100))
@@ -110,7 +110,13 @@ def identify_top_r_nodes(dict, r = 45):
 
     return top_nodes
 
+def identify_top_r_nodes(dict, r = 45):
+    return {node: value for node, value in sorted(dict.items(), key=lambda x:-x[1])}
+
 def identify_bottom_r_nodes(dict, r = 45):
+    return {node: value for node, value in sorted(dict.items(), key = lambda x:x[1])}
+
+def identify_bottom_r_nodes_v0(dict, r = 45):
     bottom_nodes = {}
     count = len(dict)
     top_n = max(1, int(count*r/100))
@@ -186,15 +192,13 @@ def process_graphs(inputs, r=45):
         filetype = filename.split('.')[-1]
         path, r = ((f'Graph_files/TGF_Files/{filename}', 45) if filetype == 'tgf' else (f'Graph_files/{filename}', 25))
         graph = load_graph(path, filetype)
-        node_removal(filename, graph)
         plot_graph(graph, tgf=(filetype=='tgf'), json=(filetype=='json'))
         results = analyze_graph(graph, r)
         export_all_results(graph, results['spectral'], results['core'], results['classical'])
 
-def node_removal(filename, graph):
-    print(filename)
-    nic = graph.nodes(2)
-    print(nic)
-    for node in graph.nodes:
-        new_graph = graph.copy()
-        new_graph.remove_node(node)
+def main():
+    inputs = ['bfn.tgf', 'cpt.tgf', 'dur.tgf', 'els.tgf', 'jnb.tgf', 'pta.tgf', 'pzb.tgf', 'vdp.tgf', 'isis-links.json',]
+    process_graphs(inputs)
+
+if __name__ == "__main__":
+    main()
