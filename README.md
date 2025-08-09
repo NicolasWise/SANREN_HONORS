@@ -84,4 +84,5 @@
 
 
 ## Notes
-    - Need to validate core strength
+    - Need to validate core strength (done)
+    - 

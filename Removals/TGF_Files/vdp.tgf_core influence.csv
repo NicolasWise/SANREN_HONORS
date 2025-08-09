@@ -1,8 +1,8 @@
 node_id,removed,remaining,aG,e1_mult,e0_mult,CIS,strategy
-5,1,8,0.7029294556367258,3,1,1.0,core influence
-1,2,7,0.4659298032772685,3,1,5.0,core influence
-6,3,6,0.0,0,5,1.0,core influence
-4,4,5,0.0,0,5,1.0,core influence
-3,5,4,0.0,0,4,1.0,core influence
+1,1,8,0.7029294556367258,3,1,1.0,core influence
+5,2,7,0.0,1,5,2.0,core influence
+4,3,6,0.0,0,5,1.0,core influence
+6,4,5,0.0,0,5,1.0,core influence
+2,5,4,0.0,0,4,1.0,core influence
 8,6,3,0.0,0,3,1.0,core influence
-2,7,2,0.0,0,2,1.0,core influence
+3,7,2,0.0,0,2,1.0,core influence

@@ -1,11 +1,11 @@
 node_id,removed,remaining,aG,e1_mult,e0_mult,CIS,strategy
-1,1,11,0.77546617721373,4,1,2.3333333333333335,core influence
-6,2,10,0.0,0,6,2.0,core influence
-5,3,9,0.0,0,7,1.0,core influence
-7,4,8,0.0,0,7,1.0,core influence
-8,5,7,0.0,0,7,1.0,core influence
-4,6,6,0.0,0,6,1.0,core influence
-3,7,5,0.0,0,5,1.0,core influence
-10,8,4,0.0,0,4,1.0,core influence
-11,9,3,0.0,0,3,1.0,core influence
-2,10,2,0.0,0,2,1.0,core influence
+1,1,11,0.77546617721373,4,1,2.5,core influence
+5,2,10,0.0,0,6,2.0,core influence
+6,3,9,0.0,1,7,2.0,core influence
+4,4,8,0.0,0,7,1.0,core influence
+7,5,7,0.0,0,6,1.0,core influence
+8,6,6,0.0,0,6,1.0,core influence
+10,7,5,0.0,0,5,1.0,core influence
+2,8,4,0.0,0,4,1.0,core influence
+9,9,3,0.0,0,3,1.0,core influence
+11,10,2,0.0,0,2,1.0,core influence

@@ -43,12 +43,7 @@ def removal_top_k_betweeness(graph):
 
 strategies = [
     (removal_random, 'random'),
-    # Baseline measure
-    #(removal_top_k_core_number, 'core number'),
-    # Core Influence - Connectivity measure
     (removal_top_k_core_influence, 'core influence'),
-    # Core strength - Resilience measure
-    #(removal_top_k_core_strengths, 'core strength'),
     (removal_top_k_degree, 'degree'),
     (removal_top_k_betweeness, 'betweeness'),
     (removal_top_k_closenss, 'closeness'),
@@ -110,6 +105,7 @@ def plot_metric_small_multiples(df, metric, outpath, max_cols=3):
         figsize=(4*cols, 3*rows),
         sharex=True, sharey=True
     )
+    
     # axes might be 1D or 2D
     axes = axes.flatten() if n > 1 else [axes]
     
@@ -118,6 +114,7 @@ def plot_metric_small_multiples(df, metric, outpath, max_cols=3):
         ax.plot(sub['removed'], sub[metric], marker='o', linestyle='-')
         ax.set_title(strat)
         ax.grid(True)
+
         # only label outer edges
         ax.set_xlabel('Removed')  
         ax.set_ylabel(metric)
