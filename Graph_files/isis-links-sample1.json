@@ -1,0 +1,1088 @@
+[
+   [
+      {
+         "hostname": "DBN-GREY1-TSN498-CAPRISA-ECRS",
+         "local-ipv4": "155.232.152.116",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "DBN-GREY1-TSN497-CAPRISA-DDMRI.00",
+         "remote-ipv4": "155.232.152.117",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/25",
+         "router-id": "155.232.242.2",
+         "linked": 1
+      },
+      {
+         "hostname": "DBN-GREY1-TSN497-CAPRISA-DDMRI",
+         "local-ipv4": "155.232.152.117",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "DBN-GREY1-TSN498-CAPRISA-ECRS.00",
+         "remote-ipv4": "155.232.152.116",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.242.3",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "DBN-GREY1-TSN498-CAPRISA-ECRS",
+         "local-ipv4": "155.232.152.110",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "DBN-GREY1-TSN151-DUTC.00",
+         "remote-ipv4": "155.232.152.111",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.242.2",
+         "linked": 1
+      },
+      {
+         "hostname": "DBN-GREY1-TSN151-DUTC",
+         "local-ipv4": "155.232.152.111",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "DBN-GREY1-TSN498-CAPRISA-ECRS.00",
+         "remote-ipv4": "155.232.152.110",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/25:0",
+         "router-id": "155.232.242.95",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "DBN-GREY1-TSN498-CAPRISA-ECRS",
+         "local-ipv4": "155.232.152.119",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "DBN-GREY1-TSN176-UNISAM.00",
+         "remote-ipv4": "155.232.152.118",
+         "last-seen": "2025-03-20 00:01:06",
+         "ifName": "te1/1/26:100",
+         "router-id": "155.232.242.2",
+         "linked": 1
+      },
+      {
+         "hostname": "DBN-GREY1-TSN176-UNISAM",
+         "local-ipv4": "155.232.152.118",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "DBN-GREY1-TSN498-CAPRISA-ECRS.00",
+         "remote-ipv4": "155.232.152.119",
+         "last-seen": "2025-03-20 00:01:06",
+         "ifName": "te1/1/25:100",
+         "router-id": "155.232.242.96",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "DBN-GREY1-TSN497-CAPRISA-DDMRI",
+         "local-ipv4": "155.232.152.90",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "DBN-GREY1-TSN232-NMMS.00",
+         "remote-ipv4": "155.232.152.91",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/25:0",
+         "router-id": "155.232.242.3",
+         "linked": 1
+      },
+      {
+         "hostname": "DBN-GREY1-TSN232-NMMS",
+         "local-ipv4": "155.232.152.91",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "DBN-GREY1-TSN497-CAPRISA-DDMRI.00",
+         "remote-ipv4": "155.232.152.90",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26",
+         "router-id": "155.232.242.94",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "local-ipv4": "155.232.64.249",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "CPT-GREYSS1-TSN145-CPUTM.00",
+         "remote-ipv4": "155.232.64.248",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "ge1/1/24",
+         "router-id": "155.232.242.5",
+         "hostname": "CPT-GREYSS1-TSN500-CPUTSPR",
+         "linked": 1
+      },
+      {
+         "local-ipv4": "155.232.64.248",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "CPT-GREYSS1-TSN500-CPUTSPR.00",
+         "remote-ipv4": "155.232.64.249",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "ge1/1/21",
+         "router-id": "155.232.242.151",
+         "hostname": "CPT-GREYSS1-TSN145-CPUTM",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "local-index": "344",
+         "remote-index": "262",
+         "hostname": "CPT4-PE1",
+         "local-ipv4": "155.232.64.243",
+         "local-ipv6": "2001:4200::155:232:64:243",
+         "metric-ipv4": "100",
+         "metric-ipv6": "100",
+         "remote-routerid": "CPT1-IR1.00",
+         "remote-ipv4": "155.232.64.242",
+         "remote-ipv6": "2001:4200::155:232:64:242",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "xe-0/0/0:0.0",
+         "router-id": "155.232.242.8",
+         "linked": 1
+      },
+      {
+         "local-index": "262",
+         "remote-index": "344",
+         "hostname": "CPT1-IR1",
+         "local-ipv4": "155.232.64.242",
+         "local-ipv6": "2001:4200::155:232:64:242",
+         "metric-ipv4": "100",
+         "metric-ipv6": "100",
+         "remote-routerid": "CPT4-PE1.00",
+         "remote-ipv4": "155.232.64.243",
+         "remote-ipv6": "2001:4200::155:232:64:243",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "xe-0/0/3:1.0",
+         "router-id": "155.232.243.109",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "local-index": "356",
+         "remote-index": "2",
+         "hostname": "CPT4-PE1",
+         "local-ipv4": "155.232.65.46",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "TENET-TSN118-AIMS.00",
+         "remote-ipv4": "155.232.65.47",
+         "remote-ipv6": "",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "xe-0/1/0.0",
+         "router-id": "155.232.242.8",
+         "linked": 1
+      },
+      {
+         "hostname": "TENET-TSN118-AIMS",
+         "local-ipv4": "155.232.65.47",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "CPT4-PE1.00",
+         "remote-ipv4": "155.232.65.46",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/25:0",
+         "router-id": "155.232.243.120",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "CPT-GREYSS1-TSN495-UCTVH",
+         "local-ipv4": "155.232.64.164",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "CPT-GREYSS1-TSN39-SAAO.00",
+         "remote-ipv4": "155.232.64.165",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "ge1/1/22",
+         "router-id": "155.232.242.9",
+         "linked": 1
+      },
+      {
+         "hostname": "CPT-GREYSS1-TSN39-SAAO",
+         "local-ipv4": "155.232.64.165",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "CPT-GREYSS1-TSN495-UCTVH.00",
+         "remote-ipv4": "155.232.64.164",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "ge1/1/22",
+         "router-id": "155.232.242.194",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "JNB-GREY2-TSN99-CSMI",
+         "local-ipv4": "155.232.128.98",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-GREY2-TSN42-UJBU.00",
+         "remote-ipv4": "155.232.128.99",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "ge1/1/1:0",
+         "router-id": "155.232.242.11",
+         "linked": 1
+      },
+      {
+         "hostname": "JNB-GREY2-TSN42-UJBU",
+         "local-ipv4": "155.232.128.99",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-GREY2-TSN99-CSMI.00",
+         "remote-ipv4": "155.232.128.98",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "ge1/1/12:0",
+         "router-id": "155.232.242.12",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "JNB-GREY2-TSN99-CSMI",
+         "local-ipv4": "155.232.128.100",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB3-PE1.00",
+         "remote-ipv4": "155.232.128.101",
+         "last-seen": "2025-06-13 07:21:05",
+         "router-id": "155.232.242.11",
+         "ifName": "ge1/1/2:0",
+         "linked": 1
+      },
+      {
+         "local-index": "131",
+         "remote-index": "3",
+         "hostname": "JNB3-PE1",
+         "local-ipv4": "155.232.128.101",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-GREY2-TSN99-CSMI.00",
+         "remote-ipv4": "155.232.128.100",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "xe-0/0/1:0.0",
+         "router-id": "155.232.243.81",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "JNB-GREY2-TSN42-UJBU",
+         "local-ipv4": "155.232.128.132",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-GREY2-TSN42-UJBU-2.00",
+         "remote-ipv4": "155.232.128.133",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/24:0",
+         "router-id": "155.232.242.12",
+         "linked": 1
+      },
+      {
+         "hostname": "JNB-GREY2-TSN42-UJBU-2",
+         "local-ipv4": "155.232.128.133",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-GREY2-TSN42-UJBU.00",
+         "remote-ipv4": "155.232.128.132",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.243.117",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "JNB-GREY2-TSN42-UJBU",
+         "local-ipv4": "155.232.128.162",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-GREY2-TSN295-CSIR-CTF.00",
+         "remote-ipv4": "155.232.128.163",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/25:0",
+         "router-id": "155.232.242.12",
+         "linked": 1
+      },
+      {
+         "hostname": "JNB-GREY2-TSN295-CSIR-CTF",
+         "local-ipv4": "155.232.128.163",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-GREY2-TSN42-UJBU.00",
+         "remote-ipv4": "155.232.128.162",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/25:0",
+         "router-id": "155.232.243.97",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "JNB-GREY2-TSN42-UJBU",
+         "local-ipv4": "155.232.128.122",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB3-PE1.00",
+         "remote-ipv4": "155.232.128.123",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.242.12",
+         "linked": 1
+      },
+      {
+         "local-index": "130",
+         "remote-index": "5",
+         "hostname": "JNB3-PE1",
+         "local-ipv4": "155.232.128.123",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-GREY2-TSN42-UJBU.00",
+         "remote-ipv4": "155.232.128.122",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "xe-0/0/0:3.0",
+         "router-id": "155.232.243.81",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "JNB-GREY1-TSN110-WITSE",
+         "local-ipv4": "155.232.21.45",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-GREY1-TSN112-WITSM.00",
+         "remote-ipv4": "155.232.21.44",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-10 18:31:06",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.242.14",
+         "linked": 1
+      },
+      {
+         "hostname": "JNB-GREY1-TSN112-WITSM",
+         "local-ipv4": "155.232.21.44",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-GREY1-TSN110-WITSE.00",
+         "remote-ipv4": "155.232.21.45",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-10 18:16:06",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.242.15",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "JNB-GREY1-TSN110-WITSE",
+         "local-ipv4": "155.232.128.135",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-GREY2-TSN295-CSIR-CTF.00",
+         "remote-ipv4": "155.232.128.134",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-10 18:31:06",
+         "ifName": "te1/1/25:0",
+         "router-id": "155.232.242.14",
+         "linked": 1
+      },
+      {
+         "hostname": "JNB-GREY2-TSN295-CSIR-CTF",
+         "local-ipv4": "155.232.128.134",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-GREY1-TSN110-WITSE.00",
+         "remote-ipv4": "155.232.128.135",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-10 18:16:06",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.243.97",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "JNB-GREY1-TSN112-WITSM",
+         "local-ipv4": "155.232.21.46",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-TSN44-UJ-DF-PE.00",
+         "remote-ipv4": "155.232.21.47",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/25:0",
+         "router-id": "155.232.242.15",
+         "linked": 1
+      },
+      {
+         "local-index": "348",
+         "remote-index": "3",
+         "hostname": "JNB-TSN44-UJ-DF-PE",
+         "local-ipv4": "155.232.21.47",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "JNB-GREY1-TSN112-WITSM.00",
+         "remote-ipv4": "155.232.21.46",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "xe-0/1/0.0",
+         "router-id": "155.232.243.6",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "HMS-TSN28-SANSA",
+         "local-ipv4": "155.232.64.238",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "GRJ-TSN459-NMU-GC.00",
+         "remote-ipv4": "155.232.64.239",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.242.17",
+         "linked": 1
+      },
+      {
+         "hostname": "GRJ-TSN459-NMU-GC",
+         "local-ipv4": "155.232.64.239",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "HMS-TSN28-SANSA.00",
+         "remote-ipv4": "155.232.64.238",
+         "remote-ipv6": "",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.242.33",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "HMS-TSN28-SANSA",
+         "local-ipv4": "155.232.64.237",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "CPT2-PE1.00",
+         "remote-ipv4": "155.232.64.236",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/25:0",
+         "router-id": "155.232.242.17",
+         "linked": 1
+      },
+      {
+         "local-index": "186",
+         "remote-index": "2",
+         "hostname": "CPT2-PE1",
+         "local-ipv4": "155.232.64.236",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "HMS-TSN28-SANSA.00",
+         "remote-ipv4": "155.232.64.237",
+         "remote-ipv6": "",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "xe-0/0/2:0.0",
+         "router-id": "155.232.243.130",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "VDP-GREY2-TSN484-DFA-VDBP",
+         "local-ipv4": "155.232.21.35",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "VDP-GREY2-TSN139-NWUFAR.00",
+         "remote-ipv4": "155.232.21.34",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/25:0",
+         "router-id": "155.232.242.19",
+         "linked": 1
+      },
+      {
+         "hostname": "VDP-GREY2-TSN139-NWUFAR",
+         "local-ipv4": "155.232.21.34",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "VDP-GREY2-TSN484-DFA-VDBP.00",
+         "remote-ipv4": "155.232.21.35",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26",
+         "router-id": "155.232.242.80",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "VDP-GREY2-TSN484-DFA-VDBP",
+         "local-ipv4": "155.232.21.33",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "VDP1-PE1.00",
+         "remote-ipv4": "155.232.21.32",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "ge1/1/22:0",
+         "router-id": "155.232.242.19",
+         "linked": 1
+      },
+      {
+         "local-index": "154",
+         "remote-index": "2",
+         "hostname": "VDP1-PE1",
+         "local-ipv4": "155.232.21.32",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "VDP-GREY2-TSN484-DFA-VDBP.00",
+         "remote-ipv4": "155.232.21.33",
+         "remote-ipv6": "",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "xe-0/1/11:0.0",
+         "router-id": "155.232.242.109",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "CPT-GREYSS1-TSN463-DFA-PLN",
+         "local-ipv4": "155.232.64.166",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "CPT-GREYSS1-TSN39-SAAO.00",
+         "remote-ipv4": "155.232.64.167",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/25:0",
+         "router-id": "155.232.242.20",
+         "linked": 1
+      },
+      {
+         "hostname": "CPT-GREYSS1-TSN39-SAAO",
+         "local-ipv4": "155.232.64.167",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "CPT-GREYSS1-TSN463-DFA-PLN.00",
+         "remote-ipv4": "155.232.64.166",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26",
+         "router-id": "155.232.242.194",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "CPT-GREYSS1-TSN463-DFA-PLN",
+         "local-ipv4": "155.232.64.152",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "CPT3-PE1.00",
+         "remote-ipv4": "155.232.64.153",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.242.20",
+         "linked": 1
+      },
+      {
+         "local-index": "211",
+         "remote-index": "3",
+         "hostname": "CPT3-PE1",
+         "local-ipv4": "155.232.64.153",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "CPT-GREYSS1-TSN463-DFA-PLN.00",
+         "remote-ipv4": "155.232.64.152",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "router-id": "155.232.242.36",
+         "ifName": "xe-0/0/4:0.0",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "CPT-GREYSS1-TSN463-DFA-PLN",
+         "local-ipv4": "155.232.65.77",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "CPT1-LAB1.00",
+         "remote-ipv4": "155.232.65.78",
+         "last-seen": "2025-06-13 07:21:05",
+         "router-id": "155.232.242.20",
+         "ifName": "ge1/1/1:777",
+         "linked": 1
+      },
+      {
+         "local-index": "98",
+         "remote-index": "4",
+         "hostname": "CPT1-LAB1",
+         "local-ipv4": "155.232.65.78",
+         "local-ipv6": "2001:4200::155:232:65:78",
+         "metric-ipv4": "10",
+         "metric-ipv6": "10",
+         "remote-routerid": "CPT-GREYSS1-TSN463-DFA-PLN.00",
+         "remote-ipv4": "155.232.65.77",
+         "remote-ipv6": "2001:4200::155:232:65:77",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "xe-1/0/0:0.0",
+         "router-id": "155.232.243.135",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "TENET-TSN470-DFA-WYN",
+         "local-ipv4": "155.232.65.45",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "TENET-TSN118-AIMS.00",
+         "remote-ipv4": "155.232.65.44",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.242.22",
+         "linked": 1
+      },
+      {
+         "hostname": "TENET-TSN118-AIMS",
+         "local-ipv4": "155.232.65.44",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "TENET-TSN470-DFA-WYN.00",
+         "remote-ipv4": "155.232.65.45",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.243.120",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "TENET-TSN470-DFA-WYN",
+         "local-ipv4": "155.232.6.217",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "CPT3-PE1.00",
+         "remote-ipv4": "155.232.6.216",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/25:0",
+         "router-id": "155.232.242.22",
+         "linked": 1
+      },
+      {
+         "local-index": "251",
+         "remote-index": "2",
+         "hostname": "CPT3-PE1",
+         "local-ipv4": "155.232.6.216",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "TENET-TSN470-DFA-WYN.00",
+         "remote-ipv4": "155.232.6.217",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "router-id": "155.232.242.36",
+         "ifName": "xe-1/0/1:2.0",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "TERACO-TSN462-RDB",
+         "local-ipv4": "155.232.64.63",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "CPT3-PE1.00",
+         "remote-ipv4": "155.232.64.62",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/2/1:100",
+         "router-id": "155.232.242.24",
+         "linked": 1
+      },
+      {
+         "local-index": "205",
+         "remote-index": "2",
+         "hostname": "CPT3-PE1",
+         "local-ipv4": "155.232.64.62",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "TERACO-TSN462-RDB.00",
+         "remote-ipv4": "155.232.64.63",
+         "remote-ipv6": "",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "xe-0/0/2:3.100",
+         "router-id": "155.232.242.36",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "TERACO-TSN462-RDB",
+         "local-ipv4": "155.232.64.253",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "SLB-TSN750-DOA-ELSEN.00",
+         "remote-ipv4": "155.232.64.252",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "ge1/1/21:0",
+         "router-id": "155.232.242.24",
+         "linked": 1
+      },
+      {
+         "hostname": "SLB-TSN750-DOA-ELSEN",
+         "local-ipv4": "155.232.64.252",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "TERACO-TSN462-RDB.00",
+         "remote-ipv4": "155.232.64.253",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "ge1/1/1:0",
+         "router-id": "155.232.243.110",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "PHU-TSN247-UFSQ",
+         "local-ipv4": "155.232.144.48",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "BTH-TSN504-ARC-SGI.00",
+         "remote-ipv4": "155.232.144.49",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "ge1/1/12:0",
+         "router-id": "155.232.242.25",
+         "linked": 1
+      },
+      {
+         "hostname": "BTH-TSN504-ARC-SGI",
+         "local-ipv4": "155.232.144.49",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "PHU-TSN247-UFSQ.00",
+         "remote-ipv4": "155.232.144.48",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "ge1/1/21",
+         "router-id": "155.232.242.102",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "PHU-TSN247-UFSQ",
+         "local-ipv4": "155.232.1.166",
+         "metric-ipv4": "500",
+         "metric-ipv6": "",
+         "remote-routerid": "DUR3-PE1.00",
+         "remote-ipv4": "155.232.1.167",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.242.25",
+         "linked": 1
+      },
+      {
+         "local-index": "234",
+         "remote-index": "4",
+         "hostname": "DUR3-PE1",
+         "local-ipv4": "155.232.1.167",
+         "metric-ipv4": "500",
+         "metric-ipv6": "",
+         "remote-routerid": "PHU-TSN247-UFSQ.00",
+         "remote-ipv4": "155.232.1.166",
+         "remote-ipv6": "",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "xe-0/0/0:3.0",
+         "router-id": "155.232.243.111",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "PHU-TSN247-UFSQ",
+         "local-ipv4": "155.232.144.30",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "WEL1-PE1.00",
+         "remote-ipv4": "155.232.144.31",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/24",
+         "router-id": "155.232.242.25",
+         "linked": 1
+      },
+      {
+         "local-index": "346",
+         "remote-index": "5",
+         "hostname": "WEL1-PE1",
+         "local-ipv4": "155.232.144.31",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "PHU-TSN247-UFSQ.00",
+         "remote-ipv4": "155.232.144.30",
+         "remote-ipv6": "",
+         "max-bandwidth": "10Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "xe-0/0/0:2.0",
+         "router-id": "155.232.243.79",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "PTA-GREYS2-TSN499-DFASAMCOR",
+         "local-ipv4": "155.232.3.163",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "PTA-GREYS2-TSN257-SANBI.00",
+         "remote-ipv4": "155.232.3.162",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/25:0",
+         "router-id": "155.232.242.27",
+         "linked": 1
+      },
+      {
+         "hostname": "PTA-GREYS2-TSN257-SANBI",
+         "local-ipv4": "155.232.3.162",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "PTA-GREYS2-TSN499-DFASAMCOR.00",
+         "remote-ipv4": "155.232.3.163",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26",
+         "router-id": "155.232.242.213",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "PTA-GREYS2-TSN499-DFASAMCOR",
+         "local-ipv4": "155.232.128.170",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "PTA-GREYS2-TSN260-CGS.00",
+         "remote-ipv4": "155.232.128.171",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/26:0",
+         "router-id": "155.232.242.27",
+         "linked": 1
+      },
+      {
+         "hostname": "PTA-GREYS2-TSN260-CGS",
+         "local-ipv4": "155.232.128.171",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "PTA-GREYS2-TSN499-DFASAMCOR.00",
+         "remote-ipv4": "155.232.128.170",
+         "remote-ipv6": "",
+         "max-bandwidth": "",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/25",
+         "router-id": "155.232.242.212",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "PTA-GREYS2-TSN499-DFASAMCOR",
+         "local-ipv4": "155.232.128.223",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "PTA-GREYS2-TSN509-UP-MAMC.00",
+         "remote-ipv4": "155.232.128.222",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/23:0",
+         "router-id": "155.232.242.27",
+         "linked": 1
+      },
+      {
+         "hostname": "PTA-GREYS2-TSN509-UP-MAMC",
+         "local-ipv4": "155.232.128.222",
+         "metric-ipv4": "100",
+         "metric-ipv6": "",
+         "remote-routerid": "PTA-GREYS2-TSN499-DFASAMCOR.00",
+         "remote-ipv4": "155.232.128.223",
+         "last-seen": "2025-06-13 07:21:05",
+         "router-id": "155.232.242.214",
+         "ifName": "te1/1/23:0",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "hostname": "PTA-GREYS2-TSN499-DFASAMCOR",
+         "local-ipv4": "155.232.128.225",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "PTA-GREYS2-TSN509-UP-MAMC.00",
+         "remote-ipv4": "155.232.128.224",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "te1/1/24:0",
+         "router-id": "155.232.242.27",
+         "linked": 1
+      },
+      {
+         "hostname": "PTA-GREYS2-TSN509-UP-MAMC",
+         "local-ipv4": "155.232.128.224",
+         "metric-ipv4": "1000",
+         "metric-ipv6": "",
+         "remote-routerid": "PTA-GREYS2-TSN499-DFASAMCOR.00",
+         "remote-ipv4": "155.232.128.225",
+         "last-seen": "2025-06-13 07:21:05",
+         "router-id": "155.232.242.214",
+         "ifName": "te1/1/24:0",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "local-index": "121",
+         "remote-index": "109",
+         "hostname": "BFN2-PE1",
+         "local-ipv4": "155.232.144.12",
+         "local-ipv6": "2001:4200::155:232:144:12",
+         "metric-ipv4": "10",
+         "metric-ipv6": "10",
+         "remote-routerid": "BFN3-PE1.00",
+         "remote-ipv4": "155.232.144.13",
+         "remote-ipv6": "2001:4200::155:232:144:13",
+         "max-bandwidth": "100Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "et-0/1/0.0",
+         "router-id": "155.232.242.28",
+         "linked": 1
+      },
+      {
+         "local-index": "109",
+         "remote-index": "121",
+         "hostname": "BFN3-PE1",
+         "local-ipv4": "155.232.144.13",
+         "local-ipv6": "2001:4200::155:232:144:13",
+         "metric-ipv4": "10",
+         "metric-ipv6": "10",
+         "remote-routerid": "BFN2-PE1.00",
+         "remote-ipv4": "155.232.144.12",
+         "remote-ipv6": "2001:4200::155:232:144:12",
+         "max-bandwidth": "100Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "et-0/1/2.0",
+         "router-id": "155.232.243.84",
+         "linked": 1
+      }
+   ],
+   [
+      {
+         "local-index": "123",
+         "remote-index": "125",
+         "hostname": "BFN2-PE1",
+         "local-ipv4": "155.232.144.16",
+         "local-ipv6": "2001:4200::155:232:144:16",
+         "metric-ipv4": "10",
+         "metric-ipv6": "10",
+         "remote-routerid": "BFN1-PE1.00",
+         "remote-ipv4": "155.232.144.17",
+         "remote-ipv6": "2001:4200::155:232:144:17",
+         "max-bandwidth": "100Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "et-0/1/2.0",
+         "router-id": "155.232.242.28",
+         "linked": 1
+      },
+      {
+         "local-index": "125",
+         "remote-index": "123",
+         "hostname": "BFN1-PE1",
+         "local-ipv4": "155.232.144.17",
+         "local-ipv6": "2001:4200::155:232:144:17",
+         "metric-ipv4": "10",
+         "metric-ipv6": "10",
+         "remote-routerid": "BFN2-PE1.00",
+         "remote-ipv4": "155.232.144.16",
+         "remote-ipv6": "2001:4200::155:232:144:16",
+         "max-bandwidth": "100Gbps",
+         "last-seen": "2025-06-13 07:21:05",
+         "ifName": "et-0/1/2.0",
+         "router-id": "155.232.243.8",
+         "linked": 1
+      }
+   ]
+]

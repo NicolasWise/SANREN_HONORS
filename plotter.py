@@ -99,6 +99,7 @@ def write_measure_to_csv(data_dict, filename, metric_name):
         for node, value in data_dict.items():
             writer.writerow([node, value])
 
+
 def identify_top_r_nodes_v0(dict, r = 45):
     top_nodes = {}
     count = len(dict)
@@ -128,27 +129,33 @@ def identify_bottom_r_nodes_v0(dict, r = 45):
     return bottom_nodes
 
 
-def export_all_results(graph, spectral, core, classical, folder='Analyses/TGF_Files'):
+def export_all_results(graph, spectral, core, classical, tgf=False, json=False, folder = None):
+    if tgf:
+        subdir = 'TGF_Files'
+    elif json:
+        subdir = 'JSON_Files'
+    else:
+        subdir = ''
     # Spectral
     eigenvalues, e1_cluster, a_G, e1_mult, e0_mult = spectral
-    spectral_analysis.write_spectral_to_output_file(graph, a_G, e1_cluster, e1_mult, e0_mult, tgf=True, json=False)
-    spectral_analysis.plot_spectral_graphs(eigenvalues, graph_name=graph.name, tgf=True)
+    spectral_analysis.write_spectral_to_output_file(graph, a_G, e1_cluster, e1_mult, e0_mult, tgf=tgf, json=json)
+    spectral_analysis.plot_spectral_graphs(eigenvalues, graph_name=graph.name, tgf=tgf, json=json)
     
     # Core resilience
     core_number, core_strength, core_influence, CIS, top_core, bottom_core = core
-    core_resilience.write_core_resilience_to_csv(graph, core_number, core_strength, core_influence, CIS, sample_name=graph.name, tgf=True)
+    core_resilience.write_core_resilience_to_csv(graph, core_number, core_strength, core_influence, CIS, sample_name=graph.name, tgf=tgf, json=json)
     
     for metric, data in top_core.items():
-        write_measure_to_csv(data, f'{folder}/{graph.name}_top_r_core_{metric}.csv', f'Core {metric.capitalize()}')
+        write_measure_to_csv(data, f'{folder}/{subdir}/{graph.name}_top_r_core_{metric}.csv', f'Core {metric.capitalize()}')
     for metric, data in bottom_core.items():
-        write_measure_to_csv(data, f'{folder}/{graph.name}_bottom_r_core_{metric}.csv', f'Core {metric.capitalize()}')
+        write_measure_to_csv(data, f'{folder}/{subdir}/{graph.name}_bottom_r_core_{metric}.csv', f'Core {metric.capitalize()}')
     
     # Classical
     degree_dict, close_dict, bet_dict, top_classical, bottom_classical = classical
     for metric, data in top_classical.items():
-        write_measure_to_csv(data, f'{folder}/{graph.name}_top_r_{metric}_centrality.csv', f'{metric.capitalize()} Centrality')
+        write_measure_to_csv(data, f'{folder}/{subdir}/{graph.name}_top_r_{metric}_centrality.csv', f'{metric.capitalize()} Centrality')
     for metric, data in bottom_classical.items():
-        write_measure_to_csv(data, f'{folder}/{graph.name}_bottom_r_{metric}_centrality.csv', f'{metric.capitalize()} Centrality')
+        write_measure_to_csv(data, f'{folder}/{subdir}/{graph.name}_bottom_r_{metric}_centrality.csv', f'{metric.capitalize()} Centrality')
 
 def analyze_graph(graph, r=45):
     # Spectral analysis
@@ -190,11 +197,11 @@ def analyze_graph(graph, r=45):
 def process_graphs(inputs, r=45):
     for filename in inputs:
         filetype = filename.split('.')[-1]
-        path, r = ((f'Graph_files/TGF_Files/{filename}', 45) if filetype == 'tgf' else (f'Graph_files/{filename}', 25))
+        path, r, tgf, json= ((f'Graph_files/TGF_Files/{filename}', 45, True, False) if filetype == 'tgf' else (f'Graph_files/{filename}', 25, False, True))
         graph = load_graph(path, filetype)
         plot_graph(graph, tgf=(filetype=='tgf'), json=(filetype=='json'))
         results = analyze_graph(graph, r)
-        export_all_results(graph, results['spectral'], results['core'], results['classical'])
+        export_all_results(graph, results['spectral'], results['core'], results['classical'],tgf=tgf, json=json, folder="Analyses")
 
 def main():
     inputs = ['bfn.tgf', 'cpt.tgf', 'dur.tgf', 'els.tgf', 'jnb.tgf', 'pta.tgf', 'pzb.tgf', 'vdp.tgf', 'isis-links.json',]

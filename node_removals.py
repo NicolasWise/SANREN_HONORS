@@ -1,12 +1,10 @@
 import math
 import random
 import os
-
 import core_resilience as core
 import classical_graph_measures as classic
 import spectral_analysis as spec
 import plotter as plot
-
 import networkx as nx
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -49,7 +47,7 @@ strategies = [
     (removal_top_k_closenss, 'closeness'),
 ]
 
-def simulate_strategy(graph, strategy_fn, strategy_name, r):
+def simulate_strategy(graph, strategy_fn, strategy_name):
     '''A list of nodes in order in which the nodes will be removed'''
     order = list(strategy_fn(graph))
     G = graph.copy()
@@ -128,8 +126,7 @@ def plot_metric_small_multiples(df, metric, outpath, max_cols=3):
     fig.savefig(outpath, dpi=300)
     plt.close(fig)
 
-def main():
-    inputs = ['bfn.tgf', 'cpt.tgf', 'dur.tgf', 'els.tgf', 'jnb.tgf', 'pta.tgf', 'pzb.tgf', 'vdp.tgf', 'isis-links.json',]
+def individual_graph_removals(inputs):
     for filename in inputs:
         filetype = filename.split('.')[-1]
         path, r, subdir = ((f'Graph_files/TGF_Files/{filename}', 45, 'TGF_Files') if filetype == 'tgf' else (f'Graph_files/{filename}', 25, 'JSON_Files'))
@@ -142,7 +139,7 @@ def main():
         all_dfs = []
 
         for fn, name in strategies:
-            df = simulate_strategy(graph, fn, name, r)
+            df = simulate_strategy(graph, fn, name)
             df.to_csv(os.path.join(out_dir, f'{filename}_{name}.csv'),index=False)
             all_dfs.append(df)
 
@@ -157,6 +154,10 @@ def main():
             )
 
         print(f'Finished Phase 2 for {filename} → results in removals/{subdir}/')
+
+def main():
+    inputs = ['bfn.tgf', 'cpt.tgf', 'dur.tgf', 'els.tgf', 'jnb.tgf', 'pta.tgf', 'pzb.tgf', 'vdp.tgf', 'isis-links.json',]
+    individual_graph_removals(inputs)
 
 
 if __name__=="__main__":
