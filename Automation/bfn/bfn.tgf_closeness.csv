@@ -1,0 +1,17 @@
+node_id,removed,remaining,aG,e1_mult,e0_mult,CIS,strategy
+2,1,17,0.387319351243301,8,1,2.0,closeness
+6,2,16,-1.17978817773144e-16,3,7,4.0,closeness
+8,3,15,-3.742048512559673e-17,3,10,2.0,closeness
+3,4,14,0.0,1,12,1.5,closeness
+1,5,13,0.0,0,12,1.0,closeness
+9,6,12,0.0,0,11,1.0,closeness
+10,7,11,0.0,0,10,1.0,closeness
+11,8,10,0.0,0,9,1.0,closeness
+12,9,9,0.0,0,8,1.0,closeness
+13,10,8,0.0,0,7,1.0,closeness
+5,11,7,0.0,0,6,1.0,closeness
+7,12,6,0.0,0,6,1.0,closeness
+14,13,5,0.0,0,5,1.0,closeness
+15,14,4,0.0,0,4,1.0,closeness
+16,15,3,0.0,0,3,1.0,closeness
+17,16,2,0.0,0,2,1.0,closeness

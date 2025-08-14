@@ -1,168 +1,163 @@
-import csv
+
+"""
+areas_for_improvement.py
+
+Utilities to:
+1) Identify connecting nodes across multiple TGF subgraphs (nodes that appear in ≥ 2 files).
+2) Compute per-graph connectivity scores (aggregate of core-influence + classical centralities).
+3) Write the lowest-connectivity nodes per TGF to a folder (default: Improvements/).
+
+Relies on project modules:
+- core_resilience.py    (must expose: compute_core_resilience(G) -> (_, _, core_influence, _))
+- classical_graph_measures.py (must expose: compute_classical_graph_measures(G) -> (degree, closeness, betweenness))
+- plotter.py            (must expose: load_graph(path, filetype))
+
+"""
+
 import os
-from itertools import combinations
+from collections import defaultdict
+from typing import Dict, Set, List
 import networkx as nx
-import plotter as plot
-import node_removals as ndr
 import pandas as pd
+import core_resilience as core
+import classical_graph_measures as classic
+import plotter as plot
 
-
-
-def parse_tgf(filepath):
+def parse_tgf_nodes(filepath: str) -> Set[str]:
+    """
+    Return a set of node labels from a .tgf file.
+    Handles labels with spaces (ID <space> label...).
+    """
     with open(filepath, encoding="utf-8") as f:
-        nodes_part, edges_part = f.read().split("\n#\n", 1)
-
-    # id -> label (labels can contain spaces)
-    id2label = {}
+        content = f.read()
+    parts = content.split("\\n#\\n", 1)
+    nodes_part = parts[0]
+    labels: Set[str] = set()
     for line in nodes_part.strip().splitlines():
-        parts = line.strip().split(maxsplit=1)
-        if not parts: 
+        line = line.strip()
+        if not line:
             continue
-        node_id  = parts[0]
-        label = parts[1].strip() if len(parts) == 2 else node_id
-        id2label[node_id] = label
-
-    # edges as label pairs (ignore weights if present)
-    edges = []
-    for line in edges_part.strip().splitlines():
-        parts = line.strip().split()
-        if len(parts) >= 2:
-            u = id2label.get(parts[0], parts[0])
-            v = id2label.get(parts[1], parts[1])
-            edges.append((u, v))
-    return id2label, edges
-
-def build_union_graph(tgf_files):
-    G = nx.Graph()
-    G.name = "TGF_UNION"
-    for fp in tgf_files:
-        _, edges = parse_tgf(fp)
-        src = os.path.basename(fp)
-        for u, v in edges:
-            if G.has_edge(u, v):
-                # track which files contributed this edge
-                G[u][v].setdefault("sources", set()).add(src)
-            else:
-                G.add_edge(u, v, sources={src})
-        # optionally: track per-node provenance
-        for u, v in edges:
-            G.nodes[u].setdefault("files", set()).add(src)
-            G.nodes[v].setdefault("files", set()).add(src)
-    return G
+        pieces = line.split(maxsplit=1)
+        if len(pieces) == 2:
+            labels.add(pieces[1].strip())
+        else:
+            labels.add(pieces[0].strip())
+    return labels
 
 
-def parse_tgf_nodes(filepath):
-    """Return a set of node labels from a TGF file."""
-    with open(filepath, "r", encoding="utf-8") as f:
-        node_section = f.read().split("\n#\n")[0]
-    nodes = set()
-    for line in node_section.strip().splitlines():
-        parts = line.strip().split(maxsplit=1)  # id, label
-        if len(parts) == 2:
-            nodes.add(parts[1].strip())
-        elif len(parts) == 1:  # in case there's no label
-            nodes.add(parts[0].strip())
-    return nodes
-
-def identify_connecting_nodes():
-    subgraphs = ['pta.tgf', 'bfn.tgf', 'cpt.tgf', 'dur.tgf', 'els.tgf', 'jnb.tgf', 'pzb.tgf', 'vdp.tgf']
-    path = 'Graph_Files/TGF_Files/'
-    '''Returns a dictionary of graph, node dictionary paires'''
-    graph_nodes = {g: parse_tgf_nodes(os.path.join(path,g)) for g in subgraphs}
-    all_nodes = set().union(*graph_nodes.values())
-    connecting_nodes = set()
-    non_connecting_nodes = set()
-
-    for g1, g2 in combinations(subgraphs, 2):
-
-        shared = graph_nodes[g1] & graph_nodes[g2]
-        non_connecting_nodes = all_nodes - shared
-        connecting_nodes.update(shared)
+def load_tgf_node_sets(subgraphs: List[str], directory: str) -> Dict[str, Set[str]]:
+    """
+    Read each TGF once and return mapping: file -> set(node_labels)
+    """
+    out: Dict[str, Set[str]] = {}
+    for name in subgraphs:
+        path = os.path.join(directory, name)
+        out[name] = parse_tgf_nodes(path)
+    return out
 
 
-    return connecting_nodes, non_connecting_nodes
-
-def find_in_sub_graph(node_name):
-    subgraphs = ['pta.tgf', 'bfn.tgf', 'cpt.tgf', 'dur.tgf', 'els.tgf', 'jnb.tgf', 'pzb.tgf', 'vdp.tgf']
-    path = 'Graph_Files/TGF_Files/'
-    for subgraph in subgraphs:
-        filename = f"{path}{subgraph}"
-
-        with open(filename) as file:
-            data = file.read().split('\n#\n')
-            nodes = data[0].strip().split('\n')
-            
-            for node in nodes:
-                new_node = node.split(' ')[1]
-                if new_node == node_name:
-                    print(f'Found {node_name} in {filename}')
-
-def read_data(file):
-    nodes = []
-    with open(file, 'r') as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=';')
-        for row in reader:
-            # search in sub graphs
-            find_in_sub_graph(row['Node'])
-
-def write_set_to_csv(filename, the_set):
-    output_file = f'Improvements/{filename}.csv'
-    with open(output_file, 'w', newline='') as f:
-        writer = csv.writer(f)
-        for item in the_set:
-            writer.writerow([item])
-        
+def connecting_nodes_global(subgraphs: List[str], directory: str) -> Dict[str, List[str]]:
+    """
+    Build a global mapping of node_label -> list of TGF files it appears in (>= 2 only).
+    """
+    node_sets = load_tgf_node_sets(subgraphs, directory)
+    appears_in = defaultdict(set)
+    for g, nodes in node_sets.items():
+        for n in nodes:
+            appears_in[n].add(g)
+    # Keep only nodes present in 2+ files
+    multi = {n: sorted(list(gs)) for n, gs in appears_in.items() if len(gs) >= 2}
+    return multi
 
 
-def main():
-    connecting_nodes, non_connecting_nodes = identify_connecting_nodes()
-    print(f"Connecting nodes: {connecting_nodes}]")
-    print(isinstance(connecting_nodes, set))
-    print(isinstance(non_connecting_nodes, set))
-    print(f"Non-connecting nodes: {non_connecting_nodes}\n{len(non_connecting_nodes)}")
+# ----------------------------
+# Connectivity scoring
+# ----------------------------
 
-    
-    write_set_to_csv("AOI_TGF_nonconnect", non_connecting_nodes)
-    write_set_to_csv("AOI_TGF_connect", connecting_nodes)
-    
-    
-    
-    '''
-    #A method to create one representative graph using all the tgf files
-    subgraphs = ['pta.tgf', 'bfn.tgf', 'cpt.tgf', 'dur.tgf', 'els.tgf', 'jnb.tgf', 'pzb.tgf', 'vdp.tgf']
-    path = 'Graph_Files/TGF_Files/'
-    # read all nodes at once
-    files = [os.path.join(path, fn) for fn in subgraphs]
-    graph = build_union_graph(files)
-    results = plot.analyze_graph(graph)
-    plot.plot_graph(graph, tgf=True)
-    plot.export_all_results(graph, results['spectral'], results['core'], results['classical'])
-    print("did it work?")
-
-    out_dir = "Removals/Union"
-    os.makedirs(out_dir, exist_ok=True)
-
-    all_dfs = []
-
-    for fn, name in ndr.strategies:
-        df = ndr.simulate_strategy(graph, fn, name)
-        df.to_csv(os.path.join(out_dir, f'{graph.name}_{name}.csv'), index=False)
-        all_dfs.append(df)
-
-    combined = pd.concat(all_dfs, ignore_index=True)
-
-    # plot each metric
-    for metric in ['aG','e1_mult','e0_mult','CIS']:
-        ndr.plot_metric_small_multiples(
-            combined,
-            metric,
-            os.path.join(out_dir, f'{graph.name}_compare_{metric}.png')
-        )'''
+def minmax(series: pd.Series) -> pd.Series:
+    """Safe min-max normalization to [0,1]. If constant, returns zeros."""
+    if series.empty:
+        return series
+    lo, hi = series.min(), series.max()
+    if hi - lo == 0:
+        return pd.Series(0.0, index=series.index)
+    return (series - lo) / (hi - lo)
 
 
-    
-    
+def compute_connectivity_scores(G: nx.Graph) -> pd.DataFrame:
+    """
+    Compute classical centralities and core influence for all nodes,
+    then return a DataFrame with normalized columns and an aggregate score.
+
+    Columns: degree, closeness, betweenness, core_influence
+             deg_n, clo_n, bet_n, ci_n, agg_score
+    """
+    degree, closeness, betweenness = classic.compute_classical_graph_measures(G)
+    _, _, core_influence, _ = core.compute_core_resilience(G)
+
+    df = pd.DataFrame({
+        "degree": pd.Series(degree, dtype=float),
+        "closeness": pd.Series(closeness, dtype=float),
+        "betweenness": pd.Series(betweenness, dtype=float),
+        "core_influence": pd.Series(core_influence, dtype=float),
+    })
+
+    # Normalize each to [0,1]
+    df["deg_n"] = minmax(df["degree"])
+    df["clo_n"] = minmax(df["closeness"])
+    df["bet_n"] = minmax(df["betweenness"])
+    df["ci_n"]  = minmax(df["core_influence"])
+
+    # Aggregate low-connectivity score (lower is worse)
+    # We interpret "connectivity" as the mean of the normalized measures.
+    df["agg_score"] = (df["deg_n"] + df["clo_n"] + df["bet_n"] + df["ci_n"]) / 4.0
+
+    return df
 
 
-if __name__=="__main__":
-    main()
+def lowest_connectivity_nodes(df: pd.DataFrame, bottom_frac: float = 0.15, min_k: int = 3) -> pd.DataFrame:
+    """
+    Return the lowest-connectivity nodes by aggregate score.
+    - bottom_frac: select bottom X% (default 15%)
+    - min_k: at least this many nodes
+    """
+    k = max(min_k, int(len(df) * bottom_frac))
+    return df.sort_values("agg_score", ascending=True).head(k)
+
+
+def write_improvement_reports_for_tgfs(
+    subgraphs: List[str],
+    directory: str,
+    outdir: str = "Improvements",
+    bottom_frac: float = 0.15,
+    min_k: int = 3,
+) -> str:
+    """
+    For each TGF in `subgraphs` (found under `directory`), load the graph via plotter.load_graph,
+    compute connectivity scores, identify lowest-connectivity nodes, and write CSV reports to `outdir`.
+
+    Also writes a global file listing connecting nodes across TGFs.
+    Returns the path to the output folder.
+    """
+    os.makedirs(outdir, exist_ok=True)
+
+    # Identify global connecting nodes (optional: write to CSV)
+    connectors = connecting_nodes_global(subgraphs, directory)
+    # Write connectors
+    conn_csv = os.path.join(outdir, "connecting_nodes_global.csv")
+    pd.DataFrame([{"node": n, "appears_in": ";".join(gs), "count": len(gs)} for n, gs in sorted(connectors.items())]).to_csv(conn_csv, index=False)
+
+    for tgf in subgraphs:
+        path = os.path.join(directory, tgf)
+        G = plot.load_graph(path, "tgf")
+        scores = compute_connectivity_scores(G)
+        low    = lowest_connectivity_nodes(scores, bottom_frac=bottom_frac, min_k=min_k)
+
+        # Flag whether node is a connector
+        low = low.copy()
+        low["is_connecting_node"] = low.index.to_series().apply(lambda n: n in connectors)
+
+        out_csv = os.path.join(outdir, f"{os.path.splitext(tgf)[0]}_lowest_connectivity.csv")
+        low.round(6).reset_index(names="node").to_csv(out_csv, index=False)
+
+    return outdir
