@@ -47,6 +47,50 @@ strategies = [
     (removal_top_k_closenss, 'closeness'),
 ]
 
+def _auc_series(s: pd.Series) -> float:
+    """Average over steps t=1..T (discrete AUC normalized by T)."""
+    # ensure natural step order
+    return float(s.mean()) if len(s) else float('nan')
+
+### NEW: cumulative AUC columns per strategy
+def add_cumulative_auc(df: pd.DataFrame, metrics=('aG', 'e0_mult', 'e1_mult', 'CIS')) -> pd.DataFrame:
+    """
+    For each strategy, compute cumulative AUC up to step t for each metric.
+    Adds columns: cumAUC_<metric>.
+    """
+    df = df.sort_values(['strategy', 'removed']).copy()
+    for m in metrics:
+        df[f'cumAUC_{m}'] = (
+            df.groupby('strategy')[m]
+              .apply(lambda s: s.expanding().mean())
+              .reset_index(level=0, drop=True)
+        )
+    return df
+
+### NEW: final AUC summary table (one row per strategy)
+def summarize_auc(df: pd.DataFrame, graph_name: str, metrics=('aG', 'e0_mult', 'e1_mult', 'CIS')) -> pd.DataFrame:
+    rows = []
+    for strat, sub in df.groupby('strategy'):
+        row = {
+            'graph': graph_name,
+            'strategy': strat,
+            'steps': int(sub['removed'].max())
+        }
+        for m in metrics:
+            row[f'AUC_{m}'] = _auc_series(sub[m])
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+### NEW: add deltas vs random baseline (convenient for LaTeX tables)
+def add_vs_random(summary_df: pd.DataFrame, metrics=('aG', 'e0_mult', 'e1_mult', 'CIS')) -> pd.DataFrame:
+    out = summary_df.copy()
+    if 'random' not in set(out['strategy']):
+        return out  # nothing to compare
+    base = out[out['strategy'] == 'random'].iloc[0]
+    for m in metrics:
+        out[f'Delta_{m}_vs_random'] = out[f'AUC_{m}'] - base[f'AUC_{m}']
+    return out
+
 def simulate_strategy(graph, strategy_fn, strategy_name):
     '''A list of nodes in order in which the nodes will be removed'''
     order = list(strategy_fn(graph))
@@ -121,12 +165,13 @@ def plot_metric_small_multiples(df, metric, outpath, max_cols=3):
     for ax in axes[n:]:
         fig.delaxes(ax)
     
-    fig.suptitle(f'{metric} vs Nodes Removed', fontsize=16)
     fig.tight_layout(rect=[0, 0, 1, 0.95])
     fig.savefig(outpath, dpi=300)
     plt.close(fig)
 
 def individual_graph_removals(inputs):
+    all_auc_rows = []
+
     for filename in inputs:
         filetype = filename.split('.')[-1]
         path, r, subdir = ((f'Graph_files/TGF_Files/{filename}', 45, 'TGF_Files') if filetype == 'tgf' else (f'Graph_files/{filename}', 25, 'JSON_Files'))
@@ -140,20 +185,50 @@ def individual_graph_removals(inputs):
 
         for fn, name in strategies:
             df = simulate_strategy(graph, fn, name)
+            df = add_cumulative_auc(df, metrics=('aG', 'e0_mult', 'e1_mult', 'CIS'))
             df.to_csv(os.path.join(out_dir, f'{filename}_{name}.csv'),index=False)
             all_dfs.append(df)
 
         combined = pd.concat(all_dfs, ignore_index=True)
+
+        auc_summary = summarize_auc(combined, graph_name=filename,
+                                    metrics=('aG', 'e0_mult', 'e1_mult', 'CIS'))
+        auc_summary = add_vs_random(auc_summary, metrics=('aG', 'e0_mult', 'e1_mult', 'CIS'))
+
+         # neat rounding for easy LaTeX
+        auc_summary_rounded = auc_summary.copy()
+        for col in auc_summary_rounded.columns:
+            if col.startswith('AUC_') or col.startswith('Delta_'):
+                auc_summary_rounded[col] = auc_summary_rounded[col].round(5)
+
+        auc_path = os.path.join(out_dir, f'{filename}_AUC_summary.csv')
+        auc_summary_rounded.to_csv(auc_path, index=False)
+
+        # collect for global table
+        all_auc_rows.append(auc_summary)
 
         # plot each metric
         for metric in ['aG','e1_mult','e0_mult','CIS']:
             plot_metric_small_multiples(
                 combined,
                 metric,
-                os.path.join(out_dir, f'{filename}_compare_{metric}.png')
+                os.path.join(out_dir, f'{filename}_compare_{metric}.jpg')
             )
 
         print(f'Finished Phase 2 for {filename} → results in removals/{subdir}/')
+
+        if all_auc_rows:
+            all_auc = pd.concat(all_auc_rows, ignore_index=True)
+            # order columns nicely
+            cols = ['graph', 'strategy', 'steps',
+                    'AUC_aG', 'AUC_e0_mult', 'AUC_e1_mult', 'AUC_CIS',
+                    'Delta_aG_vs_random', 'Delta_e0_mult_vs_random',
+                    'Delta_e1_mult_vs_random', 'Delta_CIS_vs_random']
+            cols = [c for c in cols if c in all_auc.columns]  # guard
+            all_auc = all_auc[cols]
+            all_auc = all_auc.round(5)
+            os.makedirs('Removals', exist_ok=True)
+            all_auc.to_csv('Removals/AUC_summary_all_graphs.csv', index=False)
 
 def main():
     inputs = ['bfn.tgf', 'cpt.tgf', 'dur.tgf', 'els.tgf', 'jnb.tgf', 'pta.tgf', 'pzb.tgf', 'vdp.tgf', 'isis-links.json',]

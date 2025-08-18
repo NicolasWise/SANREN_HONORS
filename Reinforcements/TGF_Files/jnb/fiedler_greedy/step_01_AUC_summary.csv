@@ -1,0 +1,6 @@
+graph,strategy,steps,AUC_aG,AUC_e0_mult,AUC_e1_mult,AUC_CIS,Delta_aG_vs_random,Delta_e0_mult_vs_random,Delta_e1_mult_vs_random,Delta_CIS_vs_random
+jnb,betweeness,31,0.01086,10.80645,0.54839,1.45161,-0.0219,5.77419,-2.25806,-1.30914
+jnb,closeness,31,0.01086,7.48387,1.12903,1.60215,-0.0219,2.45161,-1.67742,-1.1586
+jnb,core influence,31,0.01086,11.12903,1.09677,1.5914,-0.0219,6.09677,-1.70968,-1.16935
+jnb,degree,31,0.01086,11.41935,0.83871,1.60753,-0.0219,6.3871,-1.96774,-1.15323
+jnb,random,31,0.03276,5.03226,2.80645,2.76075,0.0,0.0,0.0,0.0

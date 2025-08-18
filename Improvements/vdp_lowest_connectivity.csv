@@ -1,0 +1,5 @@
+node_label,node_id,degree,closeness,betweenness,core_influence,deg_n,clo_n,bet_n,ci_n,agg_score,is_connecting_node
+POTCH,7,0.142857,0.5,0.0,0.223607,0.0,0.142857,0.0,0.0,0.035714,True
+JOBURG,2,0.142857,0.5,0.0,0.223607,0.0,0.142857,0.0,0.0,0.035714,False
+VDP-GREY1-TSN90-VUTMC,3,0.142857,0.5,0.0,0.223607,0.0,0.142857,0.0,0.0,0.035714,False
+ZEH1,8,0.142857,0.5,0.0,0.223607,0.0,0.142857,0.0,0.0,0.035714,False

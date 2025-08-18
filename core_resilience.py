@@ -7,6 +7,11 @@ import numpy as np
 from scipy import integrate
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import eigs
+try:
+    from scipy.sparse.linalg import ArpackNoConvergence
+except Exception:  # older SciPy
+    class ArpackNoConvergence(Exception):
+        pass
 
 ''' Exhaustive search: This method gives a more accurate approximation for core strengths.
     But, its complexity is O(n2^d) because it generates all combinations of neighbors for each node and is therefore ineffecient for large graphs'''
@@ -126,7 +131,7 @@ def compute_core_influence_v0(G):
 
 
 # --- Core Influence (eigenvector-based) ---
-def compute_core_influence(G, core_num, approximate=False):
+def compute_core_influence(G, core_num, approximate=False, tol =1e-6, maxiter=5000):
     """
     Compute Core Influence using eigenvector of M matrix.
     If approximate=True, ignore contributions from equal-core neighbors.
@@ -162,24 +167,53 @@ def compute_core_influence(G, core_num, approximate=False):
         cols.append(idx)
         data.append(1.0)
     
-    M = csr_matrix((data, (rows, cols)), shape=(n, n))
-    
-    # Eigenvector (largest eigenvalue)
-    try:  
-        vals, vecs = eigs(M, k=1, which='LM')
-        vec = vecs[:,0]
-    except (TypeError, ValueError) as e:
-        A = M.toarray()
-        all_vals, all_vecs = eigs(A)
-        idx = np.argmax(np.abs(all_vals))
-        vec = all_vecs[:,idx]
+    M = csr_matrix((data, (rows, cols)), shape=(n, n), dtype=np.float64)
 
+    # -------- Leading eigenvector of M (robust) --------
+    def _leading_eigvec(M_csr: csr_matrix) -> np.ndarray:
+        # tiny graphs: use dense eig directly
+        if n < 3:
+            A = M_csr.toarray()
+            vals, vecs = np.linalg.eig(A)
+            idx = np.argmax(np.real(vals))
+            return np.real(vecs[:, idx])
 
-    # normalize
-    r = np.abs(np.real(vec))
-    r /= np.linalg.norm(r)
-    
-    return {node: r[i] for node, i in node_index.items()}
+        # ARPACK attempt
+        # workspace size (ncv) > k; grow mildly with n
+        ncv = min(n, max(20, int(2 * np.sqrt(max(n, 1))) + 1))
+        rng = np.random.default_rng(42)
+        v0 = rng.standard_normal(n)
+
+        try:
+            # 'LR' = largest real part; better for non-symmetric positive matrices
+            vals, vecs = eigs(M_csr, k=1, which='LR', ncv=ncv, maxiter=maxiter, tol=tol, v0=v0)
+            return np.real(vecs[:, 0])
+        except (ArpackNoConvergence, Exception):
+            # Power iteration fallback
+            x = v0 / (np.linalg.norm(v0) or 1.0)
+            for _ in range(maxiter):
+                y = M_csr @ x
+                yn = np.linalg.norm(y)
+                if yn == 0:
+                    break
+                y /= yn
+                if np.linalg.norm(y - x) < 1e-8:
+                    x = y
+                    break
+                x = y
+            return np.real(x)
+
+    vec = _leading_eigvec(M)
+
+    # -------- Normalize nonnegative principal vector --------
+    r = np.abs(vec)
+    norm = np.linalg.norm(r)
+    if norm == 0:
+        r = np.ones_like(r) / np.sqrt(n)
+    else:
+        r /= norm
+
+    return {node: float(r[i]) for node, i in node_index.items()}
 
 # --- Core Influence-Strength metric ---
 def compute_CIS(G, f=0.9, approximate_CI=False):

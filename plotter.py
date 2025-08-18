@@ -5,6 +5,7 @@ import json
 import networkx as nx
 import csv
 import matplotlib.pyplot as plt
+import os
 
 def populate_graph_v0(filename):
     with open(filename) as f:
@@ -38,7 +39,7 @@ def populate_graph_json(filename):
     
     return G
 
-def populate_graph_tgf(filename):
+def populate_graph_tgf_v0(filename):
 
     G = nx.Graph()
     G.name = (filename.split('/'))[2]
@@ -55,6 +56,54 @@ def populate_graph_tgf(filename):
                 edge2 = parts[1]
 
                 G.add_edge(edge1, edge2)
+
+    return G
+
+def populate_graph_tgf(filename):
+    G = nx.Graph()
+    G.name = os.path.splitext(os.path.basename(filename))[0]
+
+    with open(filename, encoding="utf-8") as f:
+        content = f.read()
+
+    # Split node and edge sections (handles the standard '\n#\n')
+    try:
+        nodes_part, edges_part = content.split('\n#\n', 1)
+    except ValueError:
+        # Fallback if line endings are different or '#' line is unusual
+        parts = content.split('#', 1)
+        nodes_part = parts[0]
+        edges_part = parts[1] if len(parts) > 1 else ''
+
+    # Build ID -> label map and add nodes by label
+    id2label = {}
+    for line in nodes_part.strip().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        # TGF: "ID<space>Label..." (label may have spaces)
+        parts = line.split(maxsplit=1)
+        if len(parts) == 2:
+            nid, label = parts[0], parts[1].strip()
+        else:
+            nid, label = parts[0], parts[0]  # no separate label provided
+        id2label[nid] = label
+        G.add_node(label)
+
+    # Add edges using labels
+    for line in edges_part.strip().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        parts = line.split()
+        if len(parts) < 2:
+            continue
+        a_id, b_id = parts[0], parts[1]
+        u = id2label.get(a_id, a_id)
+        v = id2label.get(b_id, b_id)
+        if u == v:
+            continue  # skip self-loops; remove if you want to keep them
+        G.add_edge(u, v)
 
     return G
 
@@ -179,12 +228,12 @@ def analyze_graph(graph, r=45):
     top_classical = {
         'degree': identify_top_r_nodes(degree_dict, r),
         'closeness': identify_top_r_nodes(close_dict, r),
-        'betweenness': identify_top_r_nodes(bet_dict, r)
+        'betweeness': identify_top_r_nodes(bet_dict, r)
     }
     bottom_classical = {
         'degree': identify_bottom_r_nodes(degree_dict, r),
         'closeness': identify_bottom_r_nodes(close_dict, r),
-        'betweenness': identify_bottom_r_nodes(bet_dict, r)
+        'betweeness': identify_bottom_r_nodes(bet_dict, r)
     }
 
     return {

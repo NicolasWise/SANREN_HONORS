@@ -17,16 +17,12 @@ Relies on project modules:
 - classical_graph_measures.py
 - node_removals.py          (optional; if present, strategies + simulate_strategy)
 - areas_for_improvement.py  (compute_connectivity_scores, lowest_connectivity_nodes)
-
-Author: ChatGPT (automation helper)
 """
 
-from __future__ import annotations
 import os
 import sys
 import argparse
-import pandas as pd
-import matplotlib.pyplot as plt
+import pandas as pd 
 
 import networkx as nx
 
@@ -142,7 +138,8 @@ def run_node_removals(graph, outdir: str, r: int):
                 if H.number_of_nodes() < 2:
                     break
                 eigs, cluster, aG, e1_mult, e0_mult = spec.compute_spectral_analysis(H)
-                rows.append({"removed": k, "remaining": H.number_of_nodes(), "aG": aG, "e1_mult": e1_mult, "e0_mult": e0_mult, "strategy": label})
+                core_num, core_str, core_inf, CIS = core.compute_core_resilience(H)
+                rows.append({"removed": k, "remaining": H.number_of_nodes(), "aG": aG, "e1_mult": e1_mult, "e0_mult": e0_mult,'CIS':CIS ,"strategy": label})
                 H.remove_node(node)
             return pd.DataFrame(rows)
 
@@ -158,30 +155,30 @@ def run_node_removals(graph, outdir: str, r: int):
     
 
     # Simple comparison plots
-    for metric in ["aG", "e1_mult", "e0_mult"]:
+    for metric in ["aG", "e1_mult", "e0_mult", "CIS"]:
         nr.plot_metric_small_multiples(
             combined,
             metric,
-            os.path.join(outdir, f'{graph.name}_compare_{metric}.png')
+            os.path.join(outdir, f'{graph.name}_compare_{metric}.jpg')
         )
 
     return combined_csv
 
 
 def run_low_connectivity_analysis(graph, outdir: str, bottom_frac: float=0.15, min_k: int=3):
-    """Compute per-node aggregate connectivity (degree, closeness, betweenness, core-influence) and write CSV."""
+    """Compute per-node aggregate connectivity (degree, closeness, betweeness, core-influence) and write CSV."""
     os.makedirs(outdir, exist_ok=True)
     if HAS_AFI:
         scores = afi.compute_connectivity_scores(graph)
         low    = afi.lowest_connectivity_nodes(scores, bottom_frac=bottom_frac, min_k=min_k)
     else:
         # Minimal reimplementation
-        degree, closeness, betweenness = classic.compute_classical_graph_measures(graph)
+        degree, closeness, betweeness = classic.compute_classical_graph_measures(graph)
         _, _, core_influence, _ = core.compute_core_resilience(graph)
         df = pd.DataFrame({
             "degree": pd.Series(degree, dtype=float),
             "closeness": pd.Series(closeness, dtype=float),
-            "betweenness": pd.Series(betweenness, dtype=float),
+            "betweeness": pd.Series(betweeness, dtype=float),
             "core_influence": pd.Series(core_influence, dtype=float),
         })
         def minmax(s):
@@ -189,7 +186,7 @@ def run_low_connectivity_analysis(graph, outdir: str, bottom_frac: float=0.15, m
             lo, hi = s.min(), s.max()
             if hi-lo == 0: return pd.Series(0.0, index=s.index)
             return (s-lo)/(hi-lo)
-        df["agg_score"] = (minmax(df["degree"]) + minmax(df["closeness"]) + minmax(df["betweenness"]) + minmax(df["core_influence"])) / 4.0
+        df["agg_score"] = (minmax(df["degree"]) + minmax(df["closeness"]) + minmax(df["betweeness"]) + minmax(df["core_influence"])) / 4.0
         scores = df
         k = max(min_k, int(len(df)*bottom_frac))
         low = df.sort_values("agg_score", ascending=True).head(k)
