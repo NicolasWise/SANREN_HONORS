@@ -1,5 +1,43 @@
-# reinforcements.py  (adaptive budget + multi-edge steps)
+"""
+reinforcements.py
 
+Purpose
+-------
+Add edges to a given SANReN subgraph using several reinforcement strategies,
+and after each step of node additions, re-run node-removal experiments to measure
+resilience. We summarize resilience with AUC metrics of:
+
+  - AUC_aG      : algebraic connectivity a(G)   (higher is better)
+  - AUC_e0_mult : multiplicity of eigenvalue 0 (lower is better; fewer components)
+  - AUC_e1_mult : multiplicity of eigenvalue 1 (higher is better; more redundancy)
+  - AUC_CIS     : core-influence strength      (higher is better)
+
+Workflow
+--------
+1) Load graph (TGF or JSON).
+2) Choose an adaptive budget: (total_additions, per_step) via node count.
+   - Large graphs (JSON or n >= 200): total 50 edges, 10 per step.
+   - Small graphs (TGFs)            : total  5 edges,  1 per step.
+3) For each reinforcement strategy:
+   a) At each step, add edges picked by the strategy by the per_step value.
+   b) Compute Area Under the Curve for that step for each metric(before vs after additions).
+   c) Run the full removal suite (random, CI, degree, betweenness, closeness).
+   d) Compute per-strategy AUCs and save plots/CSV summaries.
+4) Repeat steps until the budget is exhausted or no non-edges remain.
+
+Outputs
+-------
+Reinforcements/<TGF|JSON>/<graph>/<strategy>/
+  - step_XX_removals.csv              : all trajectories from the removal runs
+  - step_XX_AUC_summary.csv           : AUCs per removal strategy at this step
+  - step_XX_compare_<metric>.jpg      : small-multiples plots per metric
+  - _summary_steps.csv                : one-row-per-step summary (edges added, ΔaG, AUCs)
+
+Notes
+-----
+- “Step” means one evaluation cycle; on large graphs a step can add multiple edges.
+- AUC is the mean of the trajectory values over removals.
+"""
 import os
 import math
 import random
@@ -280,9 +318,9 @@ def choose_budget_by_size(filename: str, G: nx.Graph):
     ext = os.path.splitext(filename)[1].lower()
     n = G.number_of_nodes()
     if ext == '.json' or n >= 200:
-        return 50, 10
+        return 100, 10
     else:
-        return 5, 1
+        return 10, 1
 
 # ----------------------------
 # Reinforcement loop (generic, multi-edge steps)
@@ -425,26 +463,11 @@ def run_reinforcements_for_graph(filename: str,
         outdir=os.path.join(base_out, 'random_add'),
     )
 
-    # 2b) Baseline: highest-degree pairing
-    reinforce_and_evaluate(
-        G, 'highest_degree_pair', next_edge_highest_degree_pair,
-        total_additions, per_step,
-        outdir=os.path.join(base_out, 'highest_degree_pair'),
-    )
-
     # 3) MRKC heuristic
     reinforce_and_evaluate(
         G, 'mrkc_heuristic', next_edge_mrkc_heuristic,
         total_additions, per_step,
         outdir=os.path.join(base_out, 'mrkc_heuristic'),
-    )
-
-    # 4) Areas-of-improvement (low, non-connecting)
-    reinforce_and_evaluate(
-        G, 'areas_low_nonconnect', None,
-        total_additions, per_step,
-        outdir=os.path.join(base_out, 'areas_low_nonconnect'),
-        improvements_csv=imp_csv
     )
 
 # ----------------------------

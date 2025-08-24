@@ -15,7 +15,7 @@ FILES = [
 STRATEGY_DIRS = {
     'fiedler_greedy'      : 'Fiedler-greedy (edge-add)',
     'mrkc_heuristic'      : 'MRKC heuristic',
-    'areas_low_nonconnect': 'Areas–low-nonconnect',
+    'highest_degree_pair': 'Highest-Degree Pair',
     'random_add'          : 'Random edge-add'
 }
 # Removal strategies order (rows grouped in tables)
@@ -136,6 +136,7 @@ def make_table_latex(graph_file: str, strategy_dir: str, strategy_title: str) ->
     lines.append(r'  \centering')
     lines.append(f'  \\caption{{AUC per removal strategy at baseline and after each reinforcement step for the {strategy_title} approach on \\texttt{{{graph_file}}} (no deltas).}}')
     lines.append(f'  \\label{{tab:{graph_stem}-{strategy_dir}-auc}}')
+    lines.append(r'\setlength{\tabcolsep}{2.5pt}') 
     lines.append('  \\begin{tabular}{ll' + 'r'* (1 + len(step_headers)) + '}')
     lines.append(r'    \toprule')
     header = ' & '.join(['\\textbf{Strategy}', '\\textbf{Metric}', '\\textbf{Baseline}'] + [f'\\textbf{{{h}}}' for h in step_headers])

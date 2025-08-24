@@ -1,0 +1,6 @@
+graph,strategy,steps,AUC_aG,AUC_e0_mult,AUC_e1_mult,AUC_CIS,Delta_aG_vs_random,Delta_e0_mult_vs_random,Delta_e1_mult_vs_random,Delta_CIS_vs_random
+vdp,betweeness,7,0.72738,1.85714,0.0,1.57143,-1.65333,0.85714,-0.14286,-0.14286
+vdp,closeness,7,0.72738,1.85714,0.0,1.57143,-1.65333,0.85714,-0.14286,-0.14286
+vdp,core influence,7,0.72738,1.57143,0.14286,1.71429,-1.65333,0.57143,0.0,0.0
+vdp,degree,7,0.72738,1.85714,0.0,1.57143,-1.65333,0.85714,-0.14286,-0.14286
+vdp,random,7,2.38071,1.0,0.14286,1.71429,0.0,0.0,0.0,0.0

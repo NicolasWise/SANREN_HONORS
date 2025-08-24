@@ -1,0 +1,6 @@
+graph,strategy,steps,AUC_aG,AUC_e0_mult,AUC_e1_mult,AUC_CIS,Delta_aG_vs_random,Delta_e0_mult_vs_random,Delta_e1_mult_vs_random,Delta_CIS_vs_random
+isis-links.json,betweeness,279,0.00025,57.69176,7.681,1.53886,-0.00235,24.08244,-1.27599,-0.44773
+isis-links.json,closeness,279,0.01447,30.31183,7.80287,1.7997,0.01187,-3.29749,-1.15412,-0.18689
+isis-links.json,core influence,279,0.00025,56.87814,8.9319,1.68602,-0.00235,23.26882,-0.02509,-0.30057
+isis-links.json,degree,279,0.00025,63.26165,8.08961,1.50155,-0.00235,29.65233,-0.86738,-0.48503
+isis-links.json,random,279,0.00261,33.60932,8.95699,1.98658,0.0,0.0,0.0,0.0

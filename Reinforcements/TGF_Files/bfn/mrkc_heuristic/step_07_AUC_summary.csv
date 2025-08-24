@@ -1,0 +1,6 @@
+graph,strategy,steps,AUC_aG,AUC_e0_mult,AUC_e1_mult,AUC_CIS,Delta_aG_vs_random,Delta_e0_mult_vs_random,Delta_e1_mult_vs_random,Delta_CIS_vs_random
+bfn,betweeness,16,0.03922,7.125,0.875,1.84375,-0.8125,5.875,-4.25,-1.5625
+bfn,closeness,16,0.03922,6.5625,0.875,1.84375,-0.8125,5.3125,-4.25,-1.5625
+bfn,core influence,16,0.03922,7.25,0.8125,1.8125,-0.8125,6.0,-4.3125,-1.59375
+bfn,degree,16,0.03922,7.125,0.875,1.84375,-0.8125,5.875,-4.25,-1.5625
+bfn,random,16,0.85172,1.25,5.125,3.40625,0.0,0.0,0.0,0.0
