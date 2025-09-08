@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+  \centering
+  \caption{AUC summary per removal strategy for isis-links.json}
+  \label{tab:auc_isis-links}
+  \begin{{tabular}}{{{align_spec}}}
+    \toprule
+    Removal strategy & Steps & AUC $a(G)$ & AUC $m_0$ & AUC $m_1$ & AUC CIS \\
+    \midrule
+    betweeness & 279 & 0.0001 & 73.8136 & 7.0430 & 1.2753 \\
+    closeness & 279 & 0.0096 & 39.9140 & 8.9391 & 1.5988 \\
+    core influence & 279 & 0.0002 & 67.4516 & 11.0287 & 1.5463 \\
+    degree & 279 & 0.0001 & 77.4731 & 7.9247 & 1.3252 \\
+    random & 279 & 0.0002 & 28.2007 & 16.9247 & 2.2319 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

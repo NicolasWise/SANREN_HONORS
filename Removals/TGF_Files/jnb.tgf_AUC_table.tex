@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+  \centering
+  \caption{AUC summary per removal strategy for jnb.tgf}
+  \label{tab:auc_jnb}
+  \begin{{tabular}}{{{align_spec}}}
+    \toprule
+    Removal strategy & Steps & AUC $a(G)$ & AUC $m_0$ & AUC $m_1$ & AUC CIS \\
+    \midrule
+    betweeness & 31 & 0.0072 & 11.1936 & 0.6129 & 1.3522 \\
+    closeness & 31 & 0.0717 & 8.2903 & 1.5161 & 1.6747 \\
+    core influence & 31 & 0.0072 & 11.5806 & 1.1936 & 1.5350 \\
+    degree & 31 & 0.0072 & 11.3548 & 1.0968 & 1.5672 \\
+    random & 31 & 0.0568 & 3.3548 & 4.5161 & 3.3898 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

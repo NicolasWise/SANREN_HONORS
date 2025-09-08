@@ -55,9 +55,7 @@ import classical_graph_measures as classic
 import plotter as plot
 
 
-# ----------------------------
-# Removal strategies (static order)
-# ----------------------------
+
 def removal_random(graph: nx.Graph):
     nodes = list(graph.nodes())
     random.shuffle(nodes)
@@ -87,9 +85,6 @@ REMOVAL_STRATEGIES = [
     (removal_top_k_closeness, 'closeness'),
 ]
 
-# ----------------------------
-# AUC helpers
-# ----------------------------
 def _auc_series(s: pd.Series) -> float:
     return float(s.mean()) if len(s) else float('nan')
 
@@ -121,9 +116,7 @@ def add_vs_random(summary_df: pd.DataFrame, metrics=('aG','e0_mult','e1_mult','C
         out[f'Delta_{m}_vs_random'] = out[f'AUC_{m}'] - base[f'AUC_{m}']
     return out
 
-# ----------------------------
-# Plotting
-# ----------------------------
+
 def plot_metric_small_multiples(df, metric, outpath, max_cols=3):
     strats = df['strategy'].unique()
     n = len(strats)
@@ -148,9 +141,7 @@ def plot_metric_small_multiples(df, metric, outpath, max_cols=3):
     fig.savefig(outpath, dpi=300)
     plt.close(fig)
 
-# ----------------------------
-# Removal run per strategy
-# ----------------------------
+
 def simulate_strategy(graph: nx.Graph, strategy_fn, strategy_name: str) -> pd.DataFrame:
     order_raw = strategy_fn(graph)
     order = list(order_raw.keys()) if isinstance(order_raw, dict) else list(order_raw)
@@ -190,9 +181,8 @@ def run_all_removals(graph: nx.Graph) -> pd.DataFrame:
         per.append(df)
     return pd.concat(per, ignore_index=True)
 
-# ----------------------------
+
 # Fiedler greedy (edge add)
-# ----------------------------
 def fiedler_vector(G: nx.Graph):
     L = nx.laplacian_matrix(G).astype(float)
     n = G.number_of_nodes()
@@ -226,9 +216,8 @@ def next_edge_fiedler_greedy(G: nx.Graph):
             best_pair = (u, v)
     return best_pair, best_score
 
-# ----------------------------
-# Baselines (random, highest-degree pairing)
-# ----------------------------
+
+# Baselines (random)
 def next_edge_random(G: nx.Graph):
     nodes = list(G.nodes())
     attempts = 0
@@ -239,25 +228,8 @@ def next_edge_random(G: nx.Graph):
         attempts += 1
     return None, None
 
-def next_edge_highest_degree_pair(G: nx.Graph):
-    deg = dict(G.degree())
-    sorted_nodes = sorted(deg.items(), key=lambda x: -x[1])
-    best_pair = None
-    best_sum = -1
-    for i in range(len(sorted_nodes)):
-        for j in range(i+1, len(sorted_nodes)):
-            u = sorted_nodes[i][0]
-            v = sorted_nodes[j][0]
-            if not G.has_edge(u, v) and u != v:
-                s = deg[u] + deg[v]
-                if s > best_sum:
-                    best_sum = s
-                    best_pair = (u, v)
-    return best_pair, best_sum
 
-# ----------------------------
 # MRKC (heuristic)
-# ----------------------------
 def next_edge_mrkc_heuristic(G: nx.Graph):
     core_num = nx.core_number(G)
     deg = dict(G.degree())

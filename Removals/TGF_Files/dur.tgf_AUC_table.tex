@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+  \centering
+  \caption{AUC summary per removal strategy for dur.tgf}
+  \label{tab:auc_dur}
+  \begin{{tabular}}{{{align_spec}}}
+    \toprule
+    Removal strategy & Steps & AUC $a(G)$ & AUC $m_0$ & AUC $m_1$ & AUC CIS \\
+    \midrule
+    betweeness & 26 & 0.0083 & 9.2692 & 1.1154 & 1.5064 \\
+    closeness & 26 & 0.0852 & 6.7308 & 1.1154 & 1.7692 \\
+    core influence & 26 & 0.0108 & 9.1923 & 0.9615 & 1.3397 \\
+    degree & 26 & 0.0083 & 9.1923 & 1.0769 & 1.6282 \\
+    random & 26 & 0.0430 & 2.3846 & 2.2692 & 2.2308 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

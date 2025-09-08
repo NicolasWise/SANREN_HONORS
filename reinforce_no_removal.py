@@ -152,7 +152,7 @@ def choose_budget_by_size(filename: str, G: nx.Graph):
     ext = os.path.splitext(filename)[1].lower()
     n = G.number_of_nodes()
     if ext == '.json' or n >= 200:
-        return 50, 10   # simpler defaults for speed
+        return 100, 10   # simpler defaults for speed
     else:
         return 10, 1
 
