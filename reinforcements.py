@@ -37,6 +37,8 @@ Notes
 -----
 - “Step” means one evaluation cycle; on large graphs a step can add multiple edges.
 - AUC is the mean of the trajectory values over removals.
+
+Nicolas Wise
 """
 import os
 import math
@@ -86,9 +88,11 @@ REMOVAL_STRATEGIES = [
 ]
 
 def _auc_series(s: pd.Series) -> float:
+    """ Compute AUC of a pandas Series using the trapezoidal rule. """
     return float(s.mean()) if len(s) else float('nan')
 
 def add_cumulative_auc(df: pd.DataFrame, metrics=('aG', 'e0_mult', 'e1_mult', 'CIS')) -> pd.DataFrame:
+    """ Add cumAUC_<metric> columns to the DataFrame. """
     df = df.sort_values(['strategy', 'removed']).copy()
     for m in metrics:
         df[f'cumAUC_{m}'] = (
@@ -99,6 +103,7 @@ def add_cumulative_auc(df: pd.DataFrame, metrics=('aG', 'e0_mult', 'e1_mult', 'C
     return df
 
 def summarize_auc(df: pd.DataFrame, graph_name: str, metrics=('aG','e0_mult','e1_mult','CIS')) -> pd.DataFrame:
+    """ Summarize AUC per strategy as one-row DataFrame. """
     rows = []
     for strat, sub in df.groupby('strategy'):
         row = {'graph': graph_name, 'strategy': strat, 'steps': int(sub['removed'].max())}
@@ -108,6 +113,7 @@ def summarize_auc(df: pd.DataFrame, graph_name: str, metrics=('aG','e0_mult','e1
     return pd.DataFrame(rows)
 
 def add_vs_random(summary_df: pd.DataFrame, metrics=('aG','e0_mult','e1_mult','CIS')) -> pd.DataFrame:
+    """ Add Delta_X_vs_random columns to the summary DataFrame.     """
     out = summary_df.copy()
     if 'random' not in set(out['strategy']):
         return out
@@ -118,6 +124,7 @@ def add_vs_random(summary_df: pd.DataFrame, metrics=('aG','e0_mult','e1_mult','C
 
 
 def plot_metric_small_multiples(df, metric, outpath, max_cols=3):
+    """ Small-multiples plot of the given metric over removal steps, one subplot per strategy. """
     strats = df['strategy'].unique()
     n = len(strats)
     cols = min(n, max_cols)
@@ -143,6 +150,7 @@ def plot_metric_small_multiples(df, metric, outpath, max_cols=3):
 
 
 def simulate_strategy(graph: nx.Graph, strategy_fn, strategy_name: str) -> pd.DataFrame:
+    """ Simulate node removals on the graph using the given removal strategy function."""
     order_raw = strategy_fn(graph)
     order = list(order_raw.keys()) if isinstance(order_raw, dict) else list(order_raw)
 
@@ -174,6 +182,7 @@ def simulate_strategy(graph: nx.Graph, strategy_fn, strategy_name: str) -> pd.Da
     return pd.DataFrame(records)
 
 def run_all_removals(graph: nx.Graph) -> pd.DataFrame:
+    """ Run all removal strategies on the graph and return concatenated results. """
     per = []
     for fn, name in REMOVAL_STRATEGIES:
         df = simulate_strategy(graph, fn, name)
@@ -184,6 +193,7 @@ def run_all_removals(graph: nx.Graph) -> pd.DataFrame:
 
 # Fiedler greedy (edge add)
 def fiedler_vector(G: nx.Graph):
+    """ Fiedler vector (2nd smallest eigenvector of Laplacian). """
     L = nx.laplacian_matrix(G).astype(float)
     n = G.number_of_nodes()
     if n < 3:
@@ -202,6 +212,7 @@ def fiedler_vector(G: nx.Graph):
         return vecs[:, idx[1]]
 
 def next_edge_fiedler_greedy(G: nx.Graph):
+    """ Return the non-edge (u,v) that maximizes (f[u]-f[v])^2 where f is the Fiedler vector. """
     nodes = list(G.nodes())
     idx = {u:i for i,u in enumerate(nodes)}
     f = fiedler_vector(G)
@@ -231,6 +242,7 @@ def next_edge_random(G: nx.Graph):
 
 # MRKC (heuristic)
 def next_edge_mrkc_heuristic(G: nx.Graph):
+    """ Minimum-Redundancy k-Core heuristic for adding one edge. """
     core_num = nx.core_number(G)
     deg = dict(G.degree())
 
@@ -250,35 +262,8 @@ def next_edge_mrkc_heuristic(G: nx.Graph):
             return (u, v), (core_num[u], core_num[v])
     return None, None
 
-# ----------------------------
-# Areas-of-improvement strategy
-# ----------------------------
-def next_edge_from_low_nodes(G: nx.Graph, improvements_csv: str):
-    if not os.path.isfile(improvements_csv):
-        return None, None
 
-    df = pd.read_csv(improvements_csv)
-    if 'node' in df.columns and 'node_label' not in df.columns:
-        df = df.rename(columns={'node': 'node_label'})
-    low = df[df.get('is_connecting_node', False) == False].copy()
-    if low.empty:
-        return None, None
 
-    low['agg_score'] = low.get('agg_score', 1.0)
-    candidates = []
-    nodes = [n for n in low['node_label'].tolist() if n in G.nodes()]
-    score = dict(zip(low['node_label'], low['agg_score']))
-    for u, v in combinations(nodes, 2):
-        if not G.has_edge(u, v) and u in score and v in score:
-            candidates.append(((u, v), score[u] + score[v]))
-    if not candidates:
-        return None, None
-    candidates.sort(key=lambda x: x[1])
-    return candidates[0][0], candidates[0][1]
-
-# ----------------------------
-# Adaptive budgeting
-# ----------------------------
 def choose_budget_by_size(filename: str, G: nx.Graph):
     """
     Return (total_additions, edges_per_step).
@@ -294,9 +279,7 @@ def choose_budget_by_size(filename: str, G: nx.Graph):
     else:
         return 10, 1
 
-# ----------------------------
-# Reinforcement loop (generic, multi-edge steps)
-# ----------------------------
+
 def reinforce_and_evaluate(graph: nx.Graph,
                            strategy_name: str,
                            next_edge_fn,
@@ -329,9 +312,6 @@ def reinforce_and_evaluate(graph: nx.Graph,
         for _ in range(per_step):
             if added_total >= total_additions:
                 break
-
-            if strategy_name == 'areas_low_nonconnect':
-                pair, score = next_edge_from_low_nodes(G, improvements_csv)
             else:
                 pair, score = next_edge_fn(G)
 
@@ -398,13 +378,13 @@ def reinforce_and_evaluate(graph: nx.Graph,
 
     return summary_df
 
-# ----------------------------
-# Driver per graph
-# ----------------------------
+
 def run_reinforcements_for_graph(filename: str,
                                  base_graph_dir_tgf='Graph_files/TGF_Files',
                                  base_graph_dir_json='Graph_files',
                                  improvements_dir='Improvements'):
+    """ Run all reinforcement strategies on the given graph file. """
+
     filetype = filename.split('.')[-1]
     path, subdir = ((os.path.join(base_graph_dir_tgf, filename), 'TGF_Files')
                     if filetype == 'tgf'

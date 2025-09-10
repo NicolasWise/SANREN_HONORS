@@ -22,10 +22,13 @@ import plotter as plot
 import spectral_analysis as spec
 import core_resilience as core
 
+""" 
+Reinforcement strategies and no-removal experiments.
+Nicolas Wise
+"""
 
-# ----------------------------
-# Utility: metrics on current graph
-# ----------------------------
+
+
 def compute_metrics(G: nx.Graph):
     """
     Returns dict: {'aG': ..., 'e0_mult': ..., 'e1_mult': ..., 'CIS': ...}
@@ -35,9 +38,7 @@ def compute_metrics(G: nx.Graph):
     return {"aG": float(aG), "e0_mult": float(e0_mult), "e1_mult": float(e1_mult), "CIS": float(CIS)}
 
 
-# ----------------------------
-# Reinforcement strategies
-# ----------------------------
+
 def fiedler_vector(G: nx.Graph, v0=None):
     """Fiedler vector (2nd smallest eigenvector of Laplacian). Uses eigsh with optional warm-start."""
     L = nx.laplacian_matrix(G).astype(float)
@@ -93,6 +94,7 @@ def pick_k_edges_fiedler(G: nx.Graph, k: int, Lcap: int = 200, prev_f=None):
     return chosen, f  # return f so the caller can warm-start next step
 
 def next_edge_random(G: nx.Graph):
+    """ Return a random non-edge (u,v) or (None, None) if none found after many tries. """
     nodes = list(G.nodes())
     for _ in range(20000):
         u, v = random.sample(nodes, 2)
@@ -101,6 +103,7 @@ def next_edge_random(G: nx.Graph):
     return None, None
 
 def add_k_edges_random(G: nx.Graph, k: int):
+    """ Add k random non-edges. """
     added = []
     for _ in range(k):
         u, v = next_edge_random(G)
@@ -145,10 +148,8 @@ def add_k_edges_mrkc_heuristic(G: nx.Graph, k: int):
     return added
 
 
-# ----------------------------
-# Runner: no-removal trajectories
-# ----------------------------
 def choose_budget_by_size(filename: str, G: nx.Graph):
+    """ Choose total and per-step budget based on graph size. """
     ext = os.path.splitext(filename)[1].lower()
     n = G.number_of_nodes()
     if ext == '.json' or n >= 200:
@@ -222,14 +223,17 @@ def plot_metric_across_strategies(dfs_by_strategy: dict, metric: str, outpath: s
     plt.close()
 
 
-# ----------------------------
-# Orchestration
-# ----------------------------
+
 def run_for_graph(filename: str,
                   base_graph_dir_tgf='Graph_files/TGF_Files',
                   base_graph_dir_json='Graph_files',
                   out_root='Reinforcements_NoRemoval',
                   strategies=("fiedler_greedy", "random_add", "mrkc_heuristic")):
+    
+    """
+    Run all strategies on the given graph file and plot metrics.
+    Returns dict: strategy_name -> DataFrame of results.
+    """
 
     # Load
     filetype = filename.split('.')[-1].lower()
@@ -278,6 +282,7 @@ def run_for_graph(filename: str,
 
 
 def main():
+    """ Main function to process predefined graph files. """
     parser = argparse.ArgumentParser(description="Reinforce graphs without removals and plot metrics.")
     parser.add_argument("--inputs", nargs="+",
                         default=['bfn.tgf', 'cpt.tgf', 'dur.tgf', 'els.tgf',

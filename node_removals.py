@@ -10,6 +10,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from pathlib import Path
 
+"""
+Simulate node removals from a graph according to various strategies,
+computing spectral and core metrics at each step.
+
+Nicolas Wise
+"""
+
 
 def removal_random(graph):
     nodes = list(graph.nodes())
@@ -23,10 +30,6 @@ def removal_top_k_core_number(graph):
 def removal_top_k_core_influence(graph):
     _, _, core_influence, _ = core.compute_core_resilience(graph)
     return {node:value for node, value in sorted(core_influence.items(), key = lambda x:-x[1])}
-#dont use
-def removal_top_k_core_strengths(graph):
-    _, core_strength, _, _ = core.compute_core_resilience(graph)
-    return {node: value for node, value in sorted(core_strength.items(), key = lambda x:-x[1])}
 
 def removal_top_k_degree(graph):
     deg = dict(graph.degree())
