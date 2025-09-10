@@ -1,88 +1,92 @@
 # SANREN HONOURS PROJECT
 
+## Overview
+
+This project provides a framework for analyzing the structural resilience of network topologies, with a focus on the SANReN network. It uses spectral graph theory and core resilience metrics to evaluate node criticality, centrality, and overall connectivity. The codebase supports experiments on both real-world and synthetic graphs, simulating node removals and edge reinforcements to measure the impact on network robustness.
+
+## Key Features
+
+- **Core Resilience Metrics:** Compute core number, core strength, core influence, and the Core Influence-Strength (CIS) metric for each node.
+- **Classical Graph Measures:** Degree, closeness, and betweenness centrality.
+- **Spectral Analysis:** Algebraic connectivity, eigenvalue multiplicities, and spectral clustering.
+- **Node Removal Simulations:** Evaluate resilience under various node removal strategies.
+- **Reinforcement Strategies:** Iteratively add edges to improve resilience using multiple algorithms.
+- **Automated Plotting and CSV Export:** Visualize results and export metrics for further analysis.
+
+---
+
+## File Descriptions
+
+### `reinforcements.py`
+
+Implements edge reinforcement experiments. After each step of edge additions, the code runs node-removal simulations to measure resilience using AUC metrics for algebraic connectivity (`aG`), eigenvalue multiplicities (`e0_mult`, `e1_mult`), and CIS.
+
+**Reinforcement Strategy Algorithms:**
+- **Fiedler-Greedy:** Adds edges between node pairs that maximize the squared difference in their Fiedler vector values, targeting connectivity bottlenecks.
+- **Random Add:** Adds random non-edges between nodes.
+- **MRKC Heuristic:** Connects nodes with minimum core number (vulnerable) to those with maximum core number (anchors), prioritizing degree for tie-breaking.
+
+Each strategy is implemented as a function (`next_edge_fiedler_greedy`, `next_edge_random`, `next_edge_mrkc_heuristic`) and used in iterative experiments.
+
+### `core_resilience.py`
+
+Implements core resilience metrics:
+
+- **Core Number:** The highest k for which a node remains in the k-core.
+- **Core Strength:** For node `u`, `CS(u) = |{v ∈ Γ(u): κ(v) ≥ κ(u)}| - κ(u) + 1`, where `κ(u)` is the core number and `Γ(u)` is the neighborhood.
+- **Core Influence:** Computed as the leading eigenvector of a matrix `M` that encodes influence relationships based on core numbers. The matrix is constructed so that nodes with higher or equal core numbers contribute to each other's influence.
+- **Core Influence-Strength (CIS):** The average core strength of nodes in the top f-percentile of core influence values. This metric summarizes the resilience of the most influential nodes.
+
+### `reinforce_no_removal.py`
+
+Runs reinforcement experiments **without** node removals. After each edge addition step, it computes and plots the metrics (`aG`, `e0_mult`, `e1_mult`, `CIS`) for the reinforced graph. Supports the same reinforcement strategies as `reinforcements.py`.
+
+### `node_removals.py`
+
+Simulates node removals using various strategies (random, core influence, degree, betweenness, closeness) and computes resilience metrics at each step. Generates plots and summary tables for AUC values.
+
+### `plotter.py`
+
+Handles graph loading (from TGF and JSON), plotting, and exporting analysis results to CSV and PNG files. Also provides functions for identifying top/bottom percentile nodes by metric.
+
+### `classical_graph_measures.py`
+
+Computes classical centrality measures using NetworkX:
+- Degree centrality
+- Closeness centrality
+- Betweenness centrality
+
+---
+
 ## Methodology
-    - Research Question: To what extent can spectral graph theory and core resilience analysis quantitatively evaluate the structural resilience of SANReN topology (Phase 1) - including node criticality, node centrality, and connectivity - and how effectively can these methods inform the design of a more resilient network topology (Phase2)?
 
-    Phase 1:
-        - Create a framework to evaluate the effectiveness of my chosen evaluation metrics - core resilience and spectral graph theory.
-        - Compute initial core resilience and spectral analyses of the given SANReN topology.
-            - Core Influence is a node centrality measure.
-            - Core Number/Strength are resilience measures.
-        - Compute classial graph-theoretic measures:
-            - Degree centrality.
-            - Betweeness centrality.
-            - Closeness centrality.
+1. **Graph Loading:** Supports TGF and JSON formats.
+2. **Metric Computation:** Computes spectral, core resilience, and classical metrics for each graph.
+3. **Node Removal Experiments:** Simulates removals using multiple strategies, records metric trajectories, and summarizes results with AUC.
+4. **Reinforcement Experiments:** Adds edges using different algorithms, measures improvement in resilience, and compares strategies.
+5. **Visualization and Export:** Plots metric trajectories and exports results for further analysis.
 
-        - Compute the top-r (10%) of nodes with the highes core influence, strenght, number as well as classical measures.
+---
 
-        - Compute statistical correlation between classical measures and core influence (Centrality measures).
-            - Compare top-r (top 10%) of nodes in high core influence to degree, betweeness and closeness centrality using a Spearman Rank test to test the effectiveness of Core Influence in identifying node criticality and centrality against classical graph measures.
+## How to Run
 
-            - The Spearman rank correlation test identifies how how strongly two sets of rankings are correlated. For example, if we rank nodes from most to least critical using two different methods, Spearman's correlation checks how similar those rankings are.
+- **Node Removal Experiments:** Run `node_removals.py` to simulate removals and generate results.
+- **Reinforcement Experiments:** Run `reinforcements.py` or `reinforce_no_removal.py` for edge addition experiments.
+- **Graph Analysis:** Use `plotter.py` to analyze and export metrics for individual graphs.
 
-            1. Spearman Coefficient (ρ)
-                The Spearman rank correlation coefficient measures how two ranked lists are related (values moving in the same or opposite direction).
+---
 
-                    - ρ = 1: Perfect positive monotonic relationship (two rankings are very similar)
-                    - ρ = -1: Perfect negative monotonic relationship (the rankings are very different)
-                    - ρ = 0:  No monotonic relationship (there’s little to no consistent relationship between the rankings.)
+## References
 
-                Interpretation:
-                    - Closer to ±1 → Stronger relationship between rankings (nodes ranked similarly across two measures).
-                    - Closer to 0 → Little to no correlation between the rankings.
+- [`reinforcements.py`](reinforcements.py)
+- [`core_resilience.py`](core_resilience.py)
+- [`reinforce_no_removal.py`](reinforce_no_removal.py)
+- [`node_removals.py`](node_removals.py)
+- [`plotter.py`](plotter.py)
+- [`classical_graph_measures.py`](classical_graph_measures.py)
 
-            2. p-value
-                The p-value tells you whether the observed correlation could have occurred by chance if there were really no relationship between the rankings.
+---
 
-                Interpretation:
-                    - Small p-value (e.g., < 0.05): There is a statistically significant correlation.
-                    - Large p-value: The observed correlation could be due to random chance (not statistically significant).
-            
-            - By evaluating the effectiveness of core influence in identifying node criticality and centrality provides a basis of authenticity of the Core-Influence Strength metric in evaluating a broader centrality measure of a given graph.
+## Contact
 
-        - Experimentation:
-            - Experiment with different sized graphs 
-                1. Samples of the SANReN graph:
-                    - Select random edges from the isis-links.json edges dictionary to plot smaller sample sized graphs.
-                    - Edges = [50, 100, 150, 200, 250, 300, 350, 400]
-
-                2. Classical graph generation methods (Not yet implemented):
-                    - Edges = [10, 100, 1000, 10000, 100000]
-                    - allocate each node a random name - random id value generator
-                    - use graph generation methods - random graph, graph geometric, gariel graphs, waxman graphs. 
-                - Create visualisations
-                - Write spectral, core resilience, classical measures, top-r measures for each generated graph.
-
-        - Findings:
-            - Record each samples CIS metric to evaluate each sample graph's broader connectivity.
-            - Record each samples spectral results to a graph:
-                - Algebraic connectivity of each sample
-                - Multiplicity of the one eigenvalue of each sample
-                - Density of eigenvalues around 1 of each sample
-                - Multiplicity of the zero eigenvalue of each sample
-        
-        - Phase 1 builds a framework to evaluate the effectiveness of core resilience analysis in identifying critical and central nodes against classical graph measures by evaluating the top-r nodes of each sample graph.
-    
-    Phase 2:
-        - Simulate node removals:
-            1. Removing random nodes (Acts as the BASELINE).
-            2. Removing top-K nodes using core strength/influence.
-            3. Removing top-K nodes using degree centrality.
-            4. Removing top-K nodes using closeness centrality.
-            5. Removing top-K nodes using betweeness centrality.
-
-        - Recompute spectral analysis to compare changes in connectivity (a(G)), fragmentation (multiplicty of the zero eigenvalue) and redundancy (multiplicity and density of the one eigenvalue). 
-        - This helps identify how well core resilience metrics identify and predict structural degredation, node criticality and centrality.
-
-        - Interpretation:
-            - Steeper drop in a(G) means that strategy finds more “critical” nodes.
-            - Faster rise in fragmentation (multiplicity of the zero eigenvalue) shows how quickly the network shatters.
-
-            - Comparing curves tells you:
-                - Does targeting by core-influence break connectivity faster than targeting by betweenness?
-                - Are classical centralities nearly as predictive as your core metrics, or do core metrics consistently outperform them?
-
-
-## Notes
-    - Need to validate core strength (done)
-    - 
+Nicolas
