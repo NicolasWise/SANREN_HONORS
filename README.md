@@ -64,7 +64,7 @@ Computes classical centrality measures using NetworkX:
 1. **Graph Loading:** Supports TGF and JSON formats.
 2. **Metric Computation:** Computes spectral, core resilience, and classical metrics for each graph.
 3. **Node Removal Experiments:** Simulates removals using multiple strategies, records metric trajectories, and summarizes results with AUC.
-4. **Reinforcement Experiments:** Adds edges using different algorithms, measures improvement in resilience, and compares strategies.
+4. **Reinforcement Experiments:** Adds edges using different algorithms, measures and records improvement in resilience, and compares strategies.
 5. **Visualization and Export:** Plots metric trajectories and exports results for further analysis.
 
 ---
