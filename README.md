@@ -12,6 +12,7 @@ This project provides a framework for analyzing the structural resilience of net
 - **Node Removal Simulations:** Evaluate resilience under various node removal strategies.
 - **Reinforcement Strategies:** Iteratively add edges to improve resilience using multiple algorithms.
 - **Automated Plotting and CSV Export:** Visualize results and export metrics for further analysis.
+- **Plotter:** Handles graph loading for different file types as well as exporting to CSV's and plotting of graphs.
 
 ---
 
@@ -87,6 +88,8 @@ Computes classical centrality measures using NetworkX:
 
 ---
 
-## Contact
-
-Nicolas
+## Author
+Nicolas Wise, 2025
+University of Cape Town
+Business Science, Computer Science, Honours
+SANReN, Topology Inference and Improvement Development Framework
