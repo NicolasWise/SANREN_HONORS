@@ -1,6 +1,0 @@
-node_label,node_id,degree,closeness,betweenness,core_influence,deg_n,clo_n,bet_n,ci_n,agg_score,is_connecting_node
-PZB-TSN267-SAEON-GWFN,9,0.1,0.5,0.0,0.140028,0.0,0.169231,0.0,0.0,0.042308,False
-PZB-TSN534-HSRC-SW,10,0.1,0.5,0.0,0.140028,0.0,0.169231,0.0,0.0,0.042308,False
-PZB-TSN670-ARC-CACWL,11,0.1,0.5,0.0,0.140028,0.0,0.169231,0.0,0.0,0.042308,False
-DUR3,3,0.1,0.5,0.0,0.140028,0.0,0.169231,0.0,0.0,0.042308,True
-DUR,2,0.1,0.5,0.0,0.140028,0.0,0.169231,0.0,0.0,0.042308,True

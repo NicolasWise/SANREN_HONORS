@@ -157,21 +157,19 @@ Implemented in both reinforcements.py and reinforce_no_removal.py:
 Each strategy is modular and can be extended or replaced.
 
 ## File Structure
-HONORS_PROJECT_SANREN
-├── [core_resilience.py](http://_vscodecontentref_/5)           # Core strength, influence, and CIS metrics
-├── [classical_graph_measures.py](http://_vscodecontentref_/6)  # Degree, closeness, betweenness centrality
-├── [spectral_analysis.py](http://_vscodecontentref_/7)         # Spectral metrics (algebraic connectivity, eigenvalues)
-├── [plotter.py](http://_vscodecontentref_/8)                   # Graph loading, plotting, and CSV export
-├── [node_removals.py](http://_vscodecontentref_/9)             # Node removal experiments and AUC computation
-├── [reinforcements.py](http://_vscodecontentref_/10)            # Reinforcement with node-removal evaluation
-├── [reinforce_no_removal.py](http://_vscodecontentref_/11)      # Reinforcement without node removals
-├── [plot_auc_graphs.py](http://_vscodecontentref_/12)           # AUC plotting across reinforcement steps
-├── Graph_files/                 # Input graphs (.tgf and .json)
-├── Analyses/                    # Output metrics and plots
-├── Removals/                    # Node removal experiment outputs
-├── Reinforcements/              # Reinforcement experiment outputs
-├── Reinforcements_NoRemoval/    # No-removal reinforcement outputs
-└── [README.md](http://_vscodecontentref_/13)
+- [`core_resilience.py`](./core_resilience.py) — Core strength, influence, and CIS metrics  
+- [`classical_graph_measures.py`](./classical_graph_measures.py) — Degree, closeness, betweenness  
+- [`spectral_analysis.py`](./spectral_analysis.py) — Algebraic connectivity, eigenvalues  
+- [`plotter.py`](./plotter.py) — Load/plot graphs, export CSV  
+- [`node_removals.py`](./node_removals.py) — Stress tests + AUC  
+- [`reinforcements.py`](./reinforcements.py) — Reinforcement + removals evaluation  
+- [`reinforce_no_removal.py`](./reinforce_no_removal.py) — Reinforcement (no removals)  
+- [`plot_auc_graphs.py`](./plot_auc_graphs.py) — Plot AUC across reinforcement steps  
+- [`Graph_files/`](./Graph_files/) — Input graphs  
+- [`Analyses/`](./Analyses/) — Metrics & plots  
+- [`Removals/`](./Removals/) — Removal outputs  
+- [`Reinforcements/`](./Reinforcements/) — Reinforcement outputs  
+- [`Reinforcements_NoRemoval/`](./Reinforcements_NoRemoval/) — No-removal outputs
 
 ## Outputs
 
