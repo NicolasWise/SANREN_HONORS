@@ -1,99 +1,187 @@
-# SANREN HONOURS PROJECT
+# SANReN Network Resilience Analysis
 
-## Overview
+This repository contains code and tools for analyzing and improving the resilience of network topologies, with a focus on the South African National Research and Education Network (SANReN). The project implements advanced graph-theoretic and spectral methods to simulate node removals, reinforce network connectivity, and evaluate robustness using both classical and novel metrics.
 
-This project provides a framework for analyzing the structural resilience of network topologies, with a focus on the SANReN network. It uses spectral graph theory and core resilience metrics to evaluate node criticality, centrality, and overall connectivity. The codebase supports experiments on both real-world and synthetic graphs, simulating node removals and edge reinforcements to measure the impact on network robustness.
+---
+
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Key Features](#key-features)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Graph Analysis](#graph-analysis)
+  - [Node Removal Experiments](#node-removal-experiments)
+  - [Reinforcement Experiments](#reinforcement-experiments)
+  - [No-Removal Reinforcement](#no-removal-reinforcement)
+  - [AUC Plotting](#auc-plotting)
+- [Core Metrics and Algorithms](#core-metrics-and-algorithms)
+  - [Core Strength](#core-strength)
+  - [Core Influence](#core-influence)
+  - [Core Influence-Strength (CIS)](#core-influence-strength-cis)
+  - [Spectral Metrics](#spectral-metrics)
+  - [Classical Centrality Measures](#classical-centrality-measures)
+- [Reinforcement Strategies](#reinforcement-strategies)
+- [File Structure](#file-structure)
+- [Outputs](#outputs)
+- [References](#references)
+- [Contact](#contact)
+
+---
+
+## Project Overview
+
+The goal of this project is to provide a reproducible framework for:
+- **Quantifying network resilience** under various node removal strategies.
+- **Reinforcing** (adding edges to) a network using principled algorithms to maximize robustness.
+- **Comparing** the effectiveness of different reinforcement strategies using Area Under Curve (AUC) metrics for key resilience indicators.
+
+The code supports both real-world and synthetic graphs, and outputs detailed CSVs and plots for further analysis.
+
+---
 
 ## Key Features
 
-- **Core Resilience Metrics:** Compute core number, core strength, core influence, and the Core Influence-Strength (CIS) metric for each node.
-- **Classical Graph Measures:** Degree, closeness, and betweenness centrality.
-- **Spectral Analysis:** Algebraic connectivity, eigenvalue multiplicities, and spectral clustering.
-- **Node Removal Simulations:** Evaluate resilience under various node removal strategies.
-- **Reinforcement Strategies:** Iteratively add edges to improve resilience using multiple algorithms.
-- **Automated Plotting and CSV Export:** Visualize results and export metrics for further analysis.
-- **Plotter:** Handles graph loading for different file types as well as exporting to CSV's and plotting of graphs.
+- **Automated graph loading** from TGF and JSON formats.
+- **Computation of advanced resilience metrics**: algebraic connectivity, eigenvalue multiplicities, core strength, core influence, and CIS.
+- **Simulation of node removals** using multiple strategies (random, core-based, centrality-based).
+- **Edge reinforcement algorithms**: Fiedler-greedy, MRKC heuristic, and random addition.
+- **Batch processing** for multiple graphs and strategies.
+- **Publication-ready plots and CSV summaries** for all experiments.
 
 ---
 
-## File Descriptions
+## Installation
 
-### `reinforcements.py`
+1. **Clone the repository:**
+   git clone https://github.com/yourusername/sanren-resilience.git
+   cd sanren-resilience
 
-Implements edge reinforcement experiments. After each step of edge additions, the code runs node-removal simulations to measure resilience using AUC metrics for algebraic connectivity (`aG`), eigenvalue multiplicities (`e0_mult`, `e1_mult`), and CIS.
-
-**Reinforcement Strategy Algorithms:**
-- **Fiedler-Greedy:** Adds edges between node pairs that maximize the squared difference in their Fiedler vector values, targeting connectivity bottlenecks.
-- **Random Add:** Adds random non-edges between nodes.
-- **MRKC Heuristic:** Connects nodes with minimum core number (vulnerable) to those with maximum core number (anchors), prioritizing degree for tie-breaking.
-
-Each strategy is implemented as a function (`next_edge_fiedler_greedy`, `next_edge_random`, `next_edge_mrkc_heuristic`) and used in iterative experiments.
-
-### `core_resilience.py`
-
-Implements core resilience metrics:
-
-- **Core Number:** The highest k for which a node remains in the k-core.
-- **Core Strength:** For node `u`, `CS(u) = |{v ∈ Γ(u): κ(v) ≥ κ(u)}| - κ(u) + 1`, where `κ(u)` is the core number and `Γ(u)` is the neighborhood.
-- **Core Influence:** Computed as the leading eigenvector of a matrix `M` that encodes influence relationships based on core numbers. The matrix is constructed so that nodes with higher or equal core numbers contribute to each other's influence.
-- **Core Influence-Strength (CIS):** The average core strength of nodes in the top f-percentile of core influence values. This metric summarizes the resilience of the most influential nodes.
-
-### `reinforce_no_removal.py`
-
-Runs reinforcement experiments **without** node removals. After each edge addition step, it computes and plots the metrics (`aG`, `e0_mult`, `e1_mult`, `CIS`) for the reinforced graph. Supports the same reinforcement strategies as `reinforcements.py`.
-
-### `node_removals.py`
-
-Simulates node removals using various strategies (random, core influence, degree, betweenness, closeness) and computes resilience metrics at each step. Generates plots and summary tables for AUC values.
-
-### `plotter.py`
-
-Handles graph loading (from TGF and JSON), plotting, and exporting analysis results to CSV and PNG files. Also provides functions for identifying top/bottom percentile nodes by metric.
-
-### `classical_graph_measures.py`
-
-Computes classical centrality measures using NetworkX:
-- Degree centrality
-- Closeness centrality
-- Betweenness centrality
-
-### `spectral_analysis.py`
-
-Computes spectral metrics for a given graph. Computes: Laplacian Matrix; eigenvalue spectrum; and multipliplicities of the one and zero eigenvalues.
-
---- 
-
-## Methodology
-
-1. **Graph Loading:** Supports TGF and JSON formats.
-2. **Metric Computation:** Computes spectral, core resilience, and classical metrics for each graph.
-3. **Node Removal Experiments:** Simulates removals using multiple strategies, records metric trajectories, and summarizes results with AUC.
-4. **Reinforcement Experiments:** Adds edges using different algorithms, measures and records improvement in resilience, and compares strategies.
-5. **Visualization and Export:** Plots metric trajectories and exports results for further analysis.
+2. **Install dependencies:**
+    Python 3.8+
+    Required packages (install via pip)
 
 ---
 
-## How to Run
+## Usage
 
-- **Node Removal Experiments:** Run `node_removals.py` to simulate removals and generate results.
-- **Reinforcement Experiments:** Run `reinforcements.py` or `reinforce_no_removal.py` for edge addition experiments.
-- **Graph Analysis:** Use `plotter.py` to analyze and export metrics for individual graphs.
+**Graph Analysis**
 
----
+    > python plotter.py   
 
-## References
+ - This will:
+    - load all .json or .tgf files in the Graph_Files directory.
+    - Compute baseline spectral, core resilience and classical metrics baselines.
+    - Save plots to Analyses directory
 
-- [`reinforcements.py`](reinforcements.py)
-- [`core_resilience.py`](core_resilience.py)
-- [`reinforce_no_removal.py`](reinforce_no_removal.py)
-- [`node_removals.py`](node_removals.py)
-- [`plotter.py`](plotter.py)
-- [`classical_graph_measures.py`](classical_graph_measures.py)
+**Node Removal Experiments**
 
----
+    > python node_removals.py
+
+ This will:
+ - Run all removal strategies for each graph given in the main function of the class.
+ - Output per-step and summary CSVs and plots in Removals/
+
+**Reinforcement Experiments**
+ - To run node removal experiments at each step of the reinforcement approach run: 
+
+    > python reinforcements.py 
+
+ - To run node reinforcements without applying node removals:
+    
+    > python reinforce_no_removal.py
+
+ - This will 
+    - Add edges iteratively using each strategy 
+    - After each step, run node-removal experiments and compute AUCs
+    - Output results in Reinforcements/ for application of removal suites and Reinforcements_NoRemoval/ for non-removal reinforcements.
+
+**AUC Plotting**
+
+    > python plot_auc_graphs.py
+
+ - This will:
+    - Aggregate AUCs over steps for all strategies
+    - Output comparative plots in Reinforcements/.../_plots_AUC_by_reinforcement/
+
+--
+
+## Core Metrics and Algorithms
+
+**Core Strength**
+    - Definition: For node ( u ), ( CS(u) = |{v \in \Gamma(u) : \kappa(v) \geq \kappa(u)}| - \kappa(u) + 1 )
+    
+    - Interpretation: Measures the local redundancy of a node in its k-core shell. Higher values indicate more robust local support.
+    
+    - Implementation: See core_resilience.py:compute_core_strength.
+
+**Core Influence**
+    - Definition: Leading eigenvector of a support-flow matrix ( M ) constructed from the core structure. ( M[u, v] ) encodes how much node ( u ) can support node ( v ) based on their core numbers.
+
+    - Interpretation: Highlights nodes that are structurally influential in the core-periphery structure, capturing both direct and indirect support.
+    
+    - Implementation: See core_resilience.py:compute_core_influence.
+
+**Core Influence-Strength (CIS)**
+    - Definition: The average core strength of the top ( f )-percentile nodes by core influence.
+
+    - Interpretation: Summarizes the local redundancy of the most influential nodes, providing a single resilience indicator.
+
+    - Implementation: See core_resilience.py:compute_CIS.
+
+**Spectral Metrics**
+    - Algebraic Connectivity (( a(G) )): Second-smallest eigenvalue of the Laplacian matrix. Higher values indicate better global connectivity.
+
+    - Eigenvalue Multiplicities:
+        - ( m_0 ): Multiplicity of eigenvalue 0 (number of connected components).
+        - ( m_1 ): Multiplicity of eigenvalue 1 (related to redundancy).
+    
+    - Implementation: See spectral_analysis.py:compute_spectral_analysis.
+
+**Classical Centrality Measures**
+    - Degree Centrality
+    - Closeness Centrality
+    - Betweenness Centrality
+
+    - Implementation: See classical_graph_measures.py:compute_classical_graph_measures.
+
+## Reinforcement Strategies 
+
+Implemented in both reinforcements.py and reinforce_no_removal.py:
+
+**Fiedler-Greedy:** Adds edges between node pairs with the largest difference in Fiedler vector values, targeting the weakest connectivity bottlenecks.
+
+**MRKC Heuristic:** Connects nodes with minimum core number (vulnerable) to those with maximum core number (anchors), prioritizing degree for tie-breaking.
+
+**Random Add:** Adds random non-edges between nodes.
+Each strategy is modular and can be extended or replaced.
+
+## File Structure
+HONORS_PROJECT_SANREN
+├── [core_resilience.py](http://_vscodecontentref_/5)           # Core strength, influence, and CIS metrics
+├── [classical_graph_measures.py](http://_vscodecontentref_/6)  # Degree, closeness, betweenness centrality
+├── [spectral_analysis.py](http://_vscodecontentref_/7)         # Spectral metrics (algebraic connectivity, eigenvalues)
+├── [plotter.py](http://_vscodecontentref_/8)                   # Graph loading, plotting, and CSV export
+├── [node_removals.py](http://_vscodecontentref_/9)             # Node removal experiments and AUC computation
+├── [reinforcements.py](http://_vscodecontentref_/10)            # Reinforcement with node-removal evaluation
+├── [reinforce_no_removal.py](http://_vscodecontentref_/11)      # Reinforcement without node removals
+├── [plot_auc_graphs.py](http://_vscodecontentref_/12)           # AUC plotting across reinforcement steps
+├── Graph_files/                 # Input graphs (.tgf and .json)
+├── Analyses/                    # Output metrics and plots
+├── Removals/                    # Node removal experiment outputs
+├── Reinforcements/              # Reinforcement experiment outputs
+├── Reinforcements_NoRemoval/    # No-removal reinforcement outputs
+└── [README.md](http://_vscodecontentref_/13)
+
+## Outputs
+
+- CSV files: Per-step and summary metrics for all experiments.
+- Plots: Metric trajectories, AUC comparisons, and eigenvalue distributions.
+- LaTeX tables: For easy inclusion in publications.
+- Folders: Organized by experiment type, graph, and strategy.
 
 ## Author
-Nicolas Wise, 2025
+
+Nicolas Wise
 University of Cape Town
-Business Science, Computer Science, Honours
-SANReN, Topology Inference and Improvement Development Framework
+Bachelors of Business Science, Honors in Computer Science.

@@ -41,7 +41,32 @@ def compute_metrics(G: nx.Graph):
 
 
 def fiedler_vector(G: nx.Graph, v0=None):
-    """Fiedler vector (2nd smallest eigenvector of Laplacian). Uses eigsh with optional warm-start."""
+    """ Compute a Fiedler vector: the eigenvector associated with the second-smallest
+    eigenvalue (λ2) of the *combinatorial Laplacian* L = D - A.
+
+    Intuition:
+      - The Fiedler vector (a.k.a. algebraic connectivity vector) encodes the
+        graph's “tightest bottleneck”. Nodes with very negative
+        vs very positive Fiedler entries tend to lie on opposite sides of a
+        spectral cut; adding edges across these extremes is a principled way to
+        raise λ2 (algebraic connectivity), improving global connectivity and improving resilience.
+
+    Implementation details:
+      - For tiny graphs (n<3), fall back to dense eigendecomposition.
+      - For general n, use ARPACK (eigsh) with `which='SM'` (smallest magnitude)
+        and k=2; the smallest eigenvalue is 0 with eigenvector 1, so the second
+        is the Fiedler value/vector (provided the graph is connected).
+      - `v0` is an optional warm-start vector. If you add edges incrementally,
+        the Laplacian changes only slightly; reusing the previous Fiedler vector
+        as a starting guess can speed up convergence significantly.
+
+    Caveats:
+      - If the graph is *disconnected*, λ=0 has multiplicity > 1, and the
+        “second-smallest” eigenpair may still correspond to 0. The returned
+        vector will then encode component structure rather than an intra-component
+        bottleneck. Practically, that still helps: it pushes candidates to connect
+        components—often a good first step—but you can also ensure connectivity
+        first if you want a pure bottleneck view."""
     L = nx.laplacian_matrix(G).astype(float)
     n = G.number_of_nodes()
     if n < 3:
@@ -60,10 +85,29 @@ def fiedler_vector(G: nx.Graph, v0=None):
         return vecs[:, idx[1]]
 
 def pick_k_edges_fiedler(G: nx.Graph, k: int, Lcap: int = 200, prev_f=None):
-    """
-    Add up to k non-edges that maximize (f_i - f_j)^2 using extremes of Fiedler values.
-    Computes the Fiedler vector once per step for speed.
-    """
+    """ Return the non-edge (u,v) that maximizes (f[u]-f[v])^2 where f is the Fiedler vector.
+    Choose up to k non-edges guided by the Fiedler vector:
+        - Sort nodes by Fiedler coordinate.
+        - Consider only the 'extreme' ends (lowest and highest values) to cap the
+        candidate set size (O(Lcap^2) pairs vs O(n^2)).
+        - Score each candidate (u, v) by (f[u] - f[v])^2 and pick the top-k.
+
+    Intuition:
+        - (f[u] - f[v])^2 measures how far apart u and v are along the Fiedler line.
+        Connecting large-gap pairs approximates adding “springs” across the weakest
+        cut, which tends to increase λ2 and reduce bottlenecks.
+
+    Design choices:
+        - We compute the Fiedler vector once per step (fast). The strictly optimal
+        greedy strategy would recompute f after every added edge (slow but best).
+        Empirically, “once per step” gives a strong improvement at a fraction of
+        the cost; you can trade up to recompute if k is large or graphs are small.
+        - Lcap bounds runtime: pair candidates only among the Lcap most negative and
+        Lcap most positive nodes. If n < 2*Lcap, it shrinks automatically.
+
+    Returns:
+        - chosen: list of edges added [(u, v), ...]
+        - f: the Fiedler vector used (returning it lets callers warm-start next step)"""
     if k <= 0:
         return []
     nodes = list(G.nodes())
@@ -115,14 +159,37 @@ def add_k_edges_random(G: nx.Graph, k: int):
     return added
 
 def add_k_edges_mrkc_heuristic(G: nx.Graph, k: int):
-    """
-    Heuristic: connect min-core nodes to max-core nodes (tie-broken by degree).
-    Recomputes cores once per step; fast and good enough for a simple runner.
-    """
+    """ Minimum-Redundancy k-Core heuristic for adding one edge. 
+    k-core anchoring heuristic:
+      - Identify the most vulnerable shell (min core number).
+      - Identify the most robust anchors (max core number).
+      - Connect low-κ 'vulnerable' nodes to high-κ 'anchor' nodes, tie-breaking
+        by degree (promote high-degree anchors; visit low-degree vuln first).
+
+    Intuition:
+      - In k-core theory, a node's core number κ(u) depends on how many neighbors
+        of comparable-or-stronger κ it has. By wiring periphery nodes (low κ) to
+        anchors (high κ), you increase their high-κ neighborhood count—lifting
+        local redundancy (Core Strength) and making it harder to peel them off.
+
+    Notes & trade-offs:
+      - We recompute cores once per call (not after each added edge). This is a
+        fast approximation; recomputing κ after each addition would be more
+        precise but slower.
+      - This heuristic targets *local* resilience (CS/CIS) more directly than
+        global λ2. It complements the Fiedler method, which targets spectral
+        cohesion. In practice, mix-and-match or compare both via AUC metrics.
+
+    Fallback behavior:
+      - If we run out of “obvious” vuln→anchor pairs (e.g., small graphs), we
+        fall back to adding arbitrary non-edges to satisfy the requested budget.
+
+    Returns:
+      - added: next edge added (u, v) or None if no non-edges remain"""
     added = []
     core_num = nx.core_number(G)
     deg = dict(G.degree())
-
+    # Identify vulnerable and anchor nodes
     vuln = [u for u, ku in core_num.items() if ku == min(core_num.values())]
     vuln.sort(key=lambda u: (deg[u], u))
     anchors = [v for v, kv in core_num.items() if kv == max(core_num.values())]
