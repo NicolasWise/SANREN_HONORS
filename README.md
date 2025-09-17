@@ -54,8 +54,8 @@ The code supports both real-world and synthetic graphs, and outputs detailed CSV
 ## Installation
 
 1. **Clone the repository:**
-   git clone https://github.com/yourusername/sanren-resilience.git
-   cd sanren-resilience
+   git clone https://github.com/yourusername/HONORS_PROJECT_SANREN.git
+   cd HONORS_PROJECT_SANREN
 
 2. **Install dependencies:**
     Python 3.8+
@@ -182,6 +182,6 @@ HONORS_PROJECT_SANREN
 
 ## Author
 
-Nicolas Wise
-University of Cape Town
+Nicolas Wise,
+University of Cape Town, 
 Bachelors of Business Science, Honors in Computer Science.
