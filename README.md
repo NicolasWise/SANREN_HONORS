@@ -54,8 +54,8 @@ The code supports both real-world and synthetic graphs, and outputs detailed CSV
 ## Installation
 
 1. **Clone the repository:**
-   git clone https://github.com/yourusername/HONORS_PROJECT_SANREN.git
-   cd HONORS_PROJECT_SANREN
+   git clone https://github.com/yourusername/honors_project_sanren.git
+   cd honors_project_sanren
 
 2. **Install dependencies:**
     Python 3.8+
