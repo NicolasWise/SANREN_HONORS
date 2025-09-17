@@ -54,7 +54,7 @@ The code supports both real-world and synthetic graphs, and outputs detailed CSV
 ## Installation
 
 1. **Clone the repository:**
-   git clone https://github.com/yourusername/honors_project_sanren.git
+   git clone https://github.com/NicolasWise/honors_project_sanren.git
    cd honors_project_sanren
 
 2. **Install dependencies:**
