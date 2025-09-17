@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def compute_spectral_analysis(G):
+    """ Compute the eigenvalues of the Laplacian matrix of graph G and derive spectral metrics. """
     L = nx.laplacian_matrix(G).todense()
    
     # Sorted to make algebraic connectivity derivation easier.

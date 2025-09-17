@@ -193,43 +193,116 @@ def run_all_removals(graph: nx.Graph) -> pd.DataFrame:
 
 # Fiedler greedy (edge add)
 def fiedler_vector(G: nx.Graph):
-    """ Fiedler vector (2nd smallest eigenvector of Laplacian). """
+    """ Compute a Fiedler vector: the eigenvector associated with the second-smallest
+    eigenvalue (λ2) of the *combinatorial Laplacian* L = D - A.
+
+    Intuition:
+      - The Fiedler vector (a.k.a. algebraic connectivity vector) encodes the
+        graph's “tightest bottleneck”. Nodes with very negative
+        vs very positive Fiedler entries tend to lie on opposite sides of a
+        spectral cut; adding edges across these extremes is a principled way to
+        raise λ2 (algebraic connectivity), improving global connectivity and improving resilience.
+
+    Implementation details:
+      - For tiny graphs (n<3), fall back to dense eigendecomposition.
+      - For general n, use ARPACK (eigsh) with `which='SM'` (smallest magnitude)
+        and k=2; the smallest eigenvalue is 0 with eigenvector 1, so the second
+        is the Fiedler value/vector (provided the graph is connected).
+      - `v0` is an optional warm-start vector. If you add edges incrementally,
+        the Laplacian changes only slightly; reusing the previous Fiedler vector
+        as a starting guess can speed up convergence significantly.
+
+    Caveats:
+      - If the graph is *disconnected*, λ=0 has multiplicity > 1, and the
+        “second-smallest” eigenpair may still correspond to 0. The returned
+        vector will then encode component structure rather than an intra-component
+        bottleneck. Practically, that still helps: it pushes candidates to connect
+        components—often a good first step—but you can also ensure connectivity
+        first if you want a pure bottleneck view."""
     L = nx.laplacian_matrix(G).astype(float)
     n = G.number_of_nodes()
     if n < 3:
+        # For tiny graphs, fall back to dense eigendecomposition
         arr = L.toarray()
+        # Compute eigenvalues and eigenvectors
         vals, vecs = np.linalg.eigh(arr)
+        # Get the index of the second smallest eigenvalue
         idx = np.argsort(vals)
+        # Return the corresponding eigenvector (Fiedler vector)
         return vecs[:, idx[1]]
     try:
+        # Compute the two smallest magnitude eigenvalues and their eigenvectors
+        # which SM = smallest magnitude
         vals, vecs = eigsh(L, k=2, which='SM')
+        # The Fiedler vector corresponds to the second smallest eigenvalue
+        # Sort eigenvalues and get the index of the second smallest
         order = np.argsort(vals)
+        # Return the corresponding eigenvector (Fiedler vector)
         return vecs[:, order[1]]
     except Exception:
+        # Fallback to dense method if ARPACK fails (e.g., for very small graphs)
         arr = L.toarray()
+        # Compute eigenvalues and eigenvectors
         vals, vecs = np.linalg.eigh(arr)
+        # Get the index of the second smallest eigenvalue
         idx = np.argsort(vals)
+        # Return the corresponding eigenvector (Fiedler vector)
         return vecs[:, idx[1]]
 
 def next_edge_fiedler_greedy(G: nx.Graph):
-    """ Return the non-edge (u,v) that maximizes (f[u]-f[v])^2 where f is the Fiedler vector. """
+    """ Return the non-edge (u,v) that maximizes (f[u]-f[v])^2 where f is the Fiedler vector.
+    Choose up to k non-edges guided by the Fiedler vector:
+        - Sort nodes by Fiedler coordinate.
+        - Consider only the 'extreme' ends (lowest and highest values) to cap the
+        candidate set size (O(Lcap^2) pairs vs O(n^2)).
+        - Score each candidate (u, v) by (f[u] - f[v])^2 and pick the top-k.
+
+    Intuition:
+        - (f[u] - f[v])^2 measures how far apart u and v are along the Fiedler line.
+        Connecting large-gap pairs approximates adding “springs” across the weakest
+        cut, which tends to increase λ2 and reduce bottlenecks.
+
+    Design choices:
+        - We compute the Fiedler vector once per step (fast). The strictly optimal
+        greedy strategy would recompute f after every added edge (slow but best).
+        Empirically, “once per step” gives a strong improvement at a fraction of
+        the cost; you can trade up to recompute if k is large or graphs are small.
+        - Lcap bounds runtime: pair candidates only among the Lcap most negative and
+        Lcap most positive nodes. If n < 2*Lcap, it shrinks automatically.
+
+    Returns:
+        - chosen: list of edges added [(u, v), ...]
+        - f: the Fiedler vector used (returning it lets callers warm-start next step)"""
+    
+    # Limit candidate pairs to the Lcap most extreme nodes
     nodes = list(G.nodes())
+    # Sort nodes by Fiedler coordinate.
     idx = {u:i for i,u in enumerate(nodes)}
+    # Compute Fiedler vector
     f = fiedler_vector(G)
+    # Cap candidate set size to Lcap most extreme nodes
     best_pair = None
+    # Limit candidates to the Lcap most extreme nodes
     best_score = -1.0
+    # For each pair of nodes (u, v) among the extreme nodes
     for u, v in combinations(nodes, 2):
+        # Skip if (u, v) is already an edge
         if G.has_edge(u, v):
             continue
+        # Score the pair by (f[u] - f[v])^2
         score = (f[idx[u]] - f[idx[v]])**2
+        # Update best pair if this one is better
         if score > best_score:
             best_score = score
+            # Update best pair
             best_pair = (u, v)
+    # Return the best pair found and its score
     return best_pair, best_score
 
 
 # Baselines (random)
 def next_edge_random(G: nx.Graph):
+    """ Return a random non-edge (u,v). """
     nodes = list(G.nodes())
     attempts = 0
     while attempts < 10000:
@@ -242,21 +315,59 @@ def next_edge_random(G: nx.Graph):
 
 # MRKC (heuristic)
 def next_edge_mrkc_heuristic(G: nx.Graph):
-    """ Minimum-Redundancy k-Core heuristic for adding one edge. """
+    """ Minimum-Redundancy k-Core heuristic for adding one edge. 
+    k-core anchoring heuristic:
+      - Identify the most vulnerable shell (min core number).
+      - Identify the most robust anchors (max core number).
+      - Connect low-κ 'vulnerable' nodes to high-κ 'anchor' nodes, tie-breaking
+        by degree (promote high-degree anchors; visit low-degree vuln first).
+
+    Intuition:
+      - In k-core theory, a node's core number κ(u) depends on how many neighbors
+        of comparable-or-stronger κ it has. By wiring periphery nodes (low κ) to
+        anchors (high κ), you increase their high-κ neighborhood count—lifting
+        local redundancy (Core Strength) and making it harder to peel them off.
+
+    Notes & trade-offs:
+      - We recompute cores once per call (not after each added edge). This is a
+        fast approximation; recomputing κ after each addition would be more
+        precise but slower.
+      - This heuristic targets *local* resilience (CS/CIS) more directly than
+        global λ2. It complements the Fiedler method, which targets spectral
+        cohesion. In practice, mix-and-match or compare both via AUC metrics.
+
+    Fallback behavior:
+      - If we run out of “obvious” vuln→anchor pairs (e.g., small graphs), we
+        fall back to adding arbitrary non-edges to satisfy the requested budget.
+
+    Returns:
+      - added: next edge added (u, v) or None if no non-edges remain"""
+    
+    # Compute core numbers and degrees
     core_num = nx.core_number(G)
+    # Compute degrees
     deg = dict(G.degree())
-
+    # Identify vuln and anchor sets
     min_k = min(core_num.values())
+    # Vulnerable nodes are those with the minimum core number
     vuln = [u for u, k in core_num.items() if k == min_k]
+    # Sort vuln by increasing degree (tie-break by node ID for determinism)
     vuln.sort(key=lambda u: (deg[u], u))
+    # Identify anchors
     max_k = max(core_num.values())
+    # Anchors are those with the maximum core number
     anchors = [v for v, k in core_num.items() if k == max_k]
+    # Sort anchors by decreasing degree (tie-break by node ID for determinism)
     anchors.sort(key=lambda v: (-deg[v], v))
-
+    # For each vuln node, try to connect to each anchor node
     for u in vuln:
+        # For each anchor node
         for v in anchors:
+            # Skip if u == v or (u, v) is already an edge
             if u != v and not G.has_edge(u, v):
+                # Return the first valid (u, v) found
                 return (u, v), (core_num[u], core_num[v])
+    # Fallback: if no vuln→anchor pair found, return any random non-edge
     for u, v in combinations(G.nodes(), 2):
         if not G.has_edge(u, v):
             return (u, v), (core_num[u], core_num[v])

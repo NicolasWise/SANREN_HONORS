@@ -24,25 +24,31 @@ def removal_random(graph):
     return nodes
 
 def removal_top_k_core_number(graph):
+    """ Return nodes sorted by core number descending. """
     core_number, _, _, _ = core.compute_core_resilience(graph)
     return {node: value for node, value in sorted(core_number.items(), key=lambda x:-x[1])}
 
 def removal_top_k_core_influence(graph):
+    """ Return nodes sorted by core influence descending. """
     _, _, core_influence, _ = core.compute_core_resilience(graph)
     return {node:value for node, value in sorted(core_influence.items(), key = lambda x:-x[1])}
 
 def removal_top_k_degree(graph):
+    """ Return nodes sorted by degree descending. """
     deg = dict(graph.degree())
     return {node: value for node, value in sorted(deg.items(), key=lambda x:-x[1])}
 
 def removal_top_k_closenss(graph):
+    """ Return nodes sorted by closeness descending. """
     _, closeness, _ = classic.compute_classical_graph_measures(graph)
     return {n: v for n, v in sorted(closeness.items(), key=lambda x: -x[1])}
 
 def removal_top_k_betweeness(graph):
+    """ Return nodes sorted by betweenness descending. """
     _, _, betweenness = classic.compute_classical_graph_measures(graph)
     return {n: v for n, v in sorted(betweenness.items(), key=lambda x: -x[1])}
 
+# Define removal strategies
 strategies = [
     (removal_random, 'random'),
     (removal_top_k_core_influence, 'core influence'),
@@ -51,9 +57,10 @@ strategies = [
     (removal_top_k_closenss, 'closeness'),
 ]
 
+### NEW: helper to compute AUC for a pd.Series
 def _auc_series(s: pd.Series) -> float:
     """Average over steps t=1..T (discrete AUC normalized by T)."""
-    # ensure natural step order
+    # Compute AUC as the mean of the series
     return float(s.mean()) if len(s) else float('nan')
 
 ### NEW: cumulative AUC columns per strategy
@@ -64,6 +71,7 @@ def add_cumulative_auc(df: pd.DataFrame, metrics=('aG', 'e0_mult', 'e1_mult', 'C
     """
     df = df.sort_values(['strategy', 'removed']).copy()
     for m in metrics:
+        # Compute cumulative AUC for each metric
         df[f'cumAUC_{m}'] = (
             df.groupby('strategy')[m]
               .apply(lambda s: s.expanding().mean())
@@ -74,15 +82,19 @@ def add_cumulative_auc(df: pd.DataFrame, metrics=('aG', 'e0_mult', 'e1_mult', 'C
 ### NEW: final AUC summary table (one row per strategy)
 def summarize_auc(df: pd.DataFrame, graph_name: str, metrics=('aG', 'e0_mult', 'e1_mult', 'CIS')) -> pd.DataFrame:
     rows = []
+    # For each strategy in the DataFrame
     for strat, sub in df.groupby('strategy'):
+        # Prepare a summary
         row = {
             'graph': graph_name,
             'strategy': strat,
             'steps': int(sub['removed'].max())
         }
+        # Compute AUC for each metric
         for m in metrics:
             row[f'AUC_{m}'] = _auc_series(sub[m])
         rows.append(row)
+    # Return as DataFrame
     return pd.DataFrame(rows)
 
 ### NEW: add deltas vs random baseline (convenient for LaTeX tables)
@@ -96,7 +108,9 @@ def add_vs_random(summary_df: pd.DataFrame, metrics=('aG', 'e0_mult', 'e1_mult',
     return out
 
 def simulate_strategy(graph, strategy_fn, strategy_name):
-    '''A list of nodes in order in which the nodes will be removed'''
+    '''
+    Simulate node removals according to strategy_fn.
+    Returns a DataFrame with metrics at each removal step.'''
     order = list(strategy_fn(graph))
     G = graph.copy()
     records = []
@@ -128,6 +142,7 @@ def simulate_strategy(graph, strategy_fn, strategy_name):
     return pd.DataFrame(records)
 
 def plot_metric(df, metric, outpath):
+    """ One figure per metric; one line per removal strategy. """
     plt.figure(figsize=(8,5))
     for strat in df['strategy'].unique():
         sub = df[df['strategy']==strat]
@@ -141,6 +156,7 @@ def plot_metric(df, metric, outpath):
     plt.close()
 
 def plot_metric_small_multiples(df, metric, outpath, max_cols=3):
+    """ Small multiples: one subplot per removal strategy. """
     strategies = df['strategy'].unique()
     n = len(strategies)
     cols = min(n, max_cols)
@@ -273,11 +289,13 @@ def emit_latex_auc_table(graph_name: str,
 
 
 def individual_graph_removals(inputs):
+    """ Run node removal simulations for each graph in a list inputs filenames. """
     all_auc_rows = []
 
     for filename in inputs:
         filetype = filename.split('.')[-1]
         path, r, subdir = ((f'Graph_files/TGF_Files/{filename}', 45, 'TGF_Files') if filetype == 'tgf' else (f'Graph_files/{filename}', 25, 'JSON_Files'))
+        # Load graph
         graph = plot.load_graph(path, filetype)
 
         # ensure output dir exists:
@@ -285,15 +303,18 @@ def individual_graph_removals(inputs):
         os.makedirs(out_dir, exist_ok=True)
         
         all_dfs = []
-
+        # Run each removal strategy for a given graph
         for fn, name in strategies:
+            # Simulate the strategy
             df = simulate_strategy(graph, fn, name)
+            # Add cumulative AUC columns
             df = add_cumulative_auc(df, metrics=('aG', 'e0_mult', 'e1_mult', 'CIS'))
+            # Plot each metric
             df.to_csv(os.path.join(out_dir, f'{filename}_{name}.csv'),index=False)
             all_dfs.append(df)
 
         combined = pd.concat(all_dfs, ignore_index=True)
-
+        # Summarize AUC
         auc_summary = summarize_auc(combined, graph_name=filename,
                                     metrics=('aG', 'e0_mult', 'e1_mult', 'CIS'))
         auc_summary = add_vs_random(auc_summary, metrics=('aG', 'e0_mult', 'e1_mult', 'CIS'))

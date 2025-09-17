@@ -57,7 +57,11 @@ Computes classical centrality measures using NetworkX:
 - Closeness centrality
 - Betweenness centrality
 
----
+### `spectral_analysis.py`
+
+Computes spectral metrics for a given graph. Computes: Laplacian Matrix; eigenvalue spectrum; and multipliplicities of the one and zero eigenvalues.
+
+--- 
 
 ## Methodology
 

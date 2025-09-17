@@ -31,6 +31,7 @@ Nicolas Wise
 
 def compute_metrics(G: nx.Graph):
     """
+    Compute spectral and core resilience metrics for graph G.
     Returns dict: {'aG': ..., 'e0_mult': ..., 'e1_mult': ..., 'CIS': ...}
     """
     _, _, aG, e1_mult, e0_mult = spec.compute_spectral_analysis(G)
@@ -149,7 +150,11 @@ def add_k_edges_mrkc_heuristic(G: nx.Graph, k: int):
 
 
 def choose_budget_by_size(filename: str, G: nx.Graph):
-    """ Choose total and per-step budget based on graph size. """
+    """ Choose total and per-step budget based on graph size.
+     .json files were used for the largest graph input (Isis-links.json, 400+ nodes). 10 Nodes are added for ten steps.
+     .tgf files were used for smaller graphs (under 200 nodes). 1 Node is added for ten steps.
+
+     Returns (total_budget, per_step_budget)."""
     ext = os.path.splitext(filename)[1].lower()
     n = G.number_of_nodes()
     if ext == '.json' or n >= 200:
@@ -161,6 +166,9 @@ def run_strategy_no_removal(G_in: nx.Graph, strategy_name: str, k_per_step: int,
     """
     Return a DataFrame with rows: step, num_edges_added, edges_added, aG, e0_mult, e1_mult, CIS.
     Includes step=0 baseline.
+    Runs the given strategy for the specified number of steps, adding k_per_step edges each step.
+    Stops early if no more non-edges can be added.
+   
     """
     G = G_in.copy()
     rows = []
