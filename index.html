@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SANReN Project — Papers & Demo</title>
+  <meta name="description" content="One‑page site to view six project papers and watch the demo video." />
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --surface: #111317;
+      --card: #161922;
+      --text: #e7e9ee;
+      --muted: #aab0bd;
+      --brand: #6aa5ff;
+      --accent: #9dffb0;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --maxw: 1100px;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f7f8fb; --surface: #ffffff; --card: #ffffff; --text: #0d0f14; --muted: #525b6a; --brand: #2563eb; --accent: #10b981;
+      }
+      body { background: radial-gradient(1200px 600px at 20% -10%, rgba(37,99,235,.08), transparent),
+                      radial-gradient(900px 500px at 120% 10%, rgba(16,185,129,.08), transparent); }
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, Noto Sans, Apple Color Emoji, Segoe UI Emoji; background: var(--bg); color: var(--text); }
+
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 24px; }
+
+    header.hero { padding: 48px 0 16px; text-align: center; }
+    .title { font-size: clamp(28px, 4vw, 40px); margin: 0 0 8px; letter-spacing: .3px; }
+    .subtitle { color: var(--muted); margin: 0 auto 24px; max-width: 760px; line-height: 1.45; }
+
+    .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn { appearance: none; border: none; border-radius: 999px; padding: 12px 18px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow); transition: transform .06s ease; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn-primary { background: var(--brand); color: #fff; }
+    .btn-secondary { background: transparent; color: var(--brand); border: 2px solid var(--brand); }
+    .btn-muted { background: transparent; color: var(--muted); border: 1px dashed var(--muted); }
+
+    section { margin: 28px 0 40px; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+
+    .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+    .card h3 { margin: 0; font-size: 18px; }
+    .card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .card .card-actions { margin-top: auto; display: flex; gap: 8px; }
+
+    .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 12px 0 10px; }
+    .section-head h2 { margin: 0; font-size: 22px; }
+    .section-head .hint { color: var(--muted); font-size: 14px; }
+
+    /* Modal */
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; padding: 18px; z-index: 999; }
+    .modal.open { display: flex; }
+    .dialog { width: min(100%, 1000px); background: var(--surface); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
+    .dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.06); }
+    .dialog-title { margin: 0; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dialog-actions { display: flex; gap: 8px; align-items: center; }
+    .icon-btn { background: transparent; color: var(--muted); border: 1px solid rgba(255,255,255,.15); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+    .dialog-body { padding: 0; }
+    .pdf-frame { display: block; width: 100%; height: clamp(60vh, 72vh, 78vh); border: 0; background: #0a0b0e; }
+
+    footer { opacity: .8; color: var(--muted); font-size: 13px; padding: 16px 0 40px; text-align: center; }
+    a { color: var(--brand); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero" id="top">
+      <h1 class="title">SANReN Project — Papers & Demo</h1>
+      <p class="subtitle">A lightweight one‑page hub to read the six project papers and watch the demo. PDFs open in a reader modal; the demo link opens in a new tab.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="#papers">Browse Papers</a>
+        <a class="btn btn-secondary" href="https://youtu.be/your_demo_link" target="_blank" rel="noopener">Watch Demo Video</a>
+      </div>
+    </header>
+
+    <section id="papers">
+      <div class="section-head">
+        <h2>Project Papers</h2>
+        <span class="hint">Place PDFs under <code>/assets/papers/…</code> and update labels below.</span>
+      </div>
+
+      <div class="grid">
+        <!-- Card 1 -->
+        <article class="card" data-pdf="assets/papers/paper1.pdf" data-title="Final Paper: SANReN Performance & Resilience">
+          <h3>Final Paper</h3>
+          <p>Performance & Resilience Analysis of SANReN — full text PDF.</p>
+          <div class="card-actions">
+            <button class="btn btn-primary open-pdf">Read</button>
+            <a class="btn btn-muted" href="assets/papers/paper1.pdf" download>Download</a>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="card" data-pdf="assets/papers/paper2.pdf" data-title="Methods & Toolkit">
+          <h3>Methods & Toolkit</h3>
+          <p>Metrics, removal suites, reinforcement strategies, and AUC definitions.</p>
+          <div class="card-actions">
+            <button class="btn btn-primary open-pdf">Read</button>
+            <a class="btn btn-muted" href="assets/papers/paper2.pdf" download>Download</a>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="card" data-pdf="assets/papers/paper3.pdf" data-title="Metro Case Studies">
+          <h3>Metro Case Studies</h3>
+          <p>Comparative results for Cape Town, Johannesburg, Pretoria, and more.</p>
+          <div class="card-actions">
+            <button class="btn btn-primary open-pdf">Read</button>
+            <a class="btn btn-muted" href="assets/papers/paper3.pdf" download>Download</a>
+          </div>
+        </article>
+
+        <!-- Card 4 -->
+        <article class="card" data-pdf="assets/papers/paper4.pdf" data-title="Spectral Findings">
+          <h3>Spectral Findings</h3>
+          <p>Algebraic connectivity, eigenvalue distributions, and redundancy.</p>
+          <div class="card-actions">
+            <button class="btn btn-primary open-pdf">Read</button>
+            <a class="btn btn-muted" href="assets/papers/paper4.pdf" download>Download</a>
+          </div>
+        </article>
+
+        <!-- Card 5 -->
+        <article class="card" data-pdf="assets/papers/paper5.pdf" data-title="Core Resilience Insights">
+          <h3>Core Resilience</h3>
+          <p>Core Number, Core Strength, Core Influence, and CIS results.</p>
+          <div class="card-actions">
+            <button class="btn btn-primary open-pdf">Read</button>
+            <a class="btn btn-muted" href="assets/papers/paper5.pdf" download>Download</a>
+          </div>
+        </article>
+
+        <!-- Card 6 -->
+        <article class="card" data-pdf="assets/papers/paper6.pdf" data-title="Appendices & Data">
+          <h3>Appendices & Data</h3>
+          <p>Supplementary figures, tables, and experiment configurations.</p>
+          <div class="card-actions">
+            <button class="btn btn-primary open-pdf">Read</button>
+            <a class="btn btn-muted" href="assets/papers/paper6.pdf" download>Download</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      <p>© <span id="year"></span> SANReN Project • Built as a simple static page. Host anywhere (GitHub Pages, Netlify, S3).</p>
+    </footer>
+  </div>
+
+  <!-- PDF Viewer Modal -->
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-labelledby="dlg-title">
+    <div class="dialog" role="document">
+      <div class="dialog-head">
+        <h3 class="dialog-title" id="dlg-title">Reading…</h3>
+        <div class="dialog-actions">
+          <a class="icon-btn" id="downloadLink" href="#" download>Download</a>
+          <button class="icon-btn" id="closeBtn" aria-label="Close">Close</button>
+        </div>
+      </div>
+      <div class="dialog-body">
+        <iframe class="pdf-frame" id="pdfFrame" title="Paper PDF"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Modal logic
+    const modal = document.getElementById('modal');
+    const frame = document.getElementById('pdfFrame');
+    const titleEl = document.getElementById('dlg-title');
+    const downloadLink = document.getElementById('downloadLink');
+    const closeBtn = document.getElementById('closeBtn');
+
+    function openPDF(src, title) {
+      titleEl.textContent = title || 'Document';
+      frame.src = src; // load lazily when opened
+      downloadLink.href = src;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      // Focus management
+      closeBtn.focus();
+    }
+
+    function closePDF() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      // Unload the PDF to free memory
+      frame.src = '';
+    }
+
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.open-pdf')) {
+        const card = e.target.closest('.card');
+        const src = card.getAttribute('data-pdf');
+        const title = card.getAttribute('data-title');
+        openPDF(src, title);
+      }
+      if (e.target === modal) { // click backdrop to close
+        closePDF();
+      }
+    });
+
+    closeBtn.addEventListener('click', closePDF);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePDF();
+    });
+  </script>
+</body>
+</html>
